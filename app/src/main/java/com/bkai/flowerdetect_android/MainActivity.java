@@ -1,6 +1,7 @@
 package com.bkai.flowerdetect_android;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
@@ -10,11 +11,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -31,7 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener {
     static {
         if(!OpenCVLoader.initDebug())
         {
@@ -41,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         }
     }
 
-    Toolbar toolbar;
     private static final String TAG = "OCVSample::Activity";
     private CameraView mOpenCvCameraView;
     private boolean mIsJavaCamera = true;
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     Mat mRgbaF;
     Mat mRgbaT;
 
-    Button takePicure;
+    ImageButton takePicure;
 
 
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
@@ -92,7 +95,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         mOpenCvCameraView = (CameraView) findViewById(R.id.CameraView);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        takePicure = (Button) findViewById(R.id.takePicture);
+        mOpenCvCameraView.setFocusable(true);
+        mOpenCvCameraView.setOnTouchListener(MainActivity.this);
+
+        takePicure = (ImageButton) findViewById(R.id.takePicture);
         takePicure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +109,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 path.mkdirs();
                 String fullPath = sdcard + "/FlowerDetect/" + currentDateandTime + ".jpg";
                 mOpenCvCameraView.takePicture(fullPath, null);
+
+                Intent showPicture = new Intent(getApplicationContext(), ShowPicture.class);
+                showPicture.putExtra("img_path", fullPath);
+                startActivity(showPicture);
             }
         });
     }
@@ -171,5 +181,11 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         if(mOpenCvCameraView != null){
             mOpenCvCameraView.disableView();
         }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        mOpenCvCameraView.focusOnTouch(motionEvent);
+        return true;
     }
 }
