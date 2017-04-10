@@ -20,8 +20,10 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <Button
+    <ImageButton
         android:id="@+id/takePicture"
+        android:background="#00131232"
+        android:src="@drawable/camera_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

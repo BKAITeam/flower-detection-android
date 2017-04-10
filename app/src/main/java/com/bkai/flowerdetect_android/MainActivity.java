@@ -15,6 +15,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     Mat mRgbaF;
     Mat mRgbaT;
 
-    Button takePicure;
+    ImageButton takePicure;
 
 
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         mOpenCvCameraView = (CameraView) findViewById(R.id.CameraView);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        takePicure = (Button) findViewById(R.id.takePicture);
+        takePicure = (ImageButton) findViewById(R.id.takePicture);
         takePicure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
