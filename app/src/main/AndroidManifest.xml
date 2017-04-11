@@ -43,7 +43,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/MyDialog"
             android:name=".ShowPicture">
         </activity>
     </application>

@@ -5,6 +5,7 @@ package com.bkai.flowerdetect_android;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
@@ -29,6 +30,7 @@ public class CameraView extends JavaCameraView implements PictureCallback, AutoF
     public CameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+    private static boolean takingPicture = false;
 
     public List<String> getEffectList() {
         return mCamera.getParameters().getSupportedColorEffects();
@@ -63,11 +65,11 @@ public class CameraView extends JavaCameraView implements PictureCallback, AutoF
         return mCamera.getParameters().getPreviewSize();
     }
 
-    public void takePicture(final String fileName,Object callback) {
+    public void takePicture(final String fileName,Camera.PreviewCallback callback) {
         this.mPictureFileName = fileName;
         // Postview and jpeg are sent in the same buffers if the queue is not empty when performing a capture.
         // Clear up buffers to avoid mCamera.takePicture to be stuck because of a memory issue
-        mCamera.setPreviewCallback(null);
+        mCamera.setPreviewCallback(callback);
 
         // PictureCallback is implemented by the current class
         mCamera.takePicture(null, null, this);
@@ -76,9 +78,8 @@ public class CameraView extends JavaCameraView implements PictureCallback, AutoF
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
         // The camera preview was automatically stopped. Start it again.
-//        mCamera.startPreview();
-//        mCamera.setPreviewCallback(this);
-
+        mCamera.startPreview();
+        mCamera.setPreviewCallback(this);
         // Write the image in a file (in jpeg format)
         try {
             FileOutputStream fos = new FileOutputStream(mPictureFileName);
@@ -89,6 +90,14 @@ public class CameraView extends JavaCameraView implements PictureCallback, AutoF
         } catch (java.io.IOException e) {
             Log.e("PictureDemo", "Exception in photoCallback", e);
         }
+
+    }
+
+
+    public void showPreview(String fullPath){
+        Intent showPicture = new Intent(getContext(), ShowPicture.class);
+        showPicture.putExtra("img_path", fullPath);
+        getContext().startActivity(showPicture);
     }
 
     @Override

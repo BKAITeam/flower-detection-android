@@ -3,6 +3,7 @@ package com.bkai.flowerdetect_android;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,11 +29,16 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.TermCriteria;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener {
@@ -55,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     ImageButton takePicure;
 
+    boolean takingPicture = false;
+    String mPictureFileName;
 
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
         @Override
@@ -102,21 +110,47 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         takePicure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-                String currentDateandTime = sdf.format(new Date());
-                String sdcard = Environment.getExternalStorageDirectory().getPath();
-                File path = new File(sdcard+"/FlowerDetect/");
-                path.mkdirs();
-                String fullPath = sdcard + "/FlowerDetect/" + currentDateandTime + ".jpg";
-                mOpenCvCameraView.takePicture(fullPath, null);
-
-                Intent showPicture = new Intent(getApplicationContext(), ShowPicture.class);
-                showPicture.putExtra("img_path", fullPath);
-                startActivity(showPicture);
+                takingPicture = true;
             }
         });
     }
 
+    private void takePicture(Mat mRgba){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        String currentDateandTime = sdf.format(new Date());
+        String sdcard = Environment.getExternalStorageDirectory().getPath();
+        File path = new File(sdcard+"/FlowerDetect/");
+        path.mkdirs();
+        mPictureFileName = sdcard + "/FlowerDetect/" + currentDateandTime + ".jpg";
+
+        Imgcodecs.imwrite(mPictureFileName, mRgba);
+//        mOpenCvCameraView.takePicture(mPictureFileName, mPreviewCallBack);
+        Log.e("Taking done", "");
+        takingPicture = false;
+        showPreview(mPictureFileName);
+    }
+
+
+    android.hardware.Camera.PreviewCallback  mPreviewCallBack = new android.hardware.Camera.PreviewCallback() {
+        @Override
+        public void onPreviewFrame(byte[] bytes, android.hardware.Camera camera) {
+            showPreview(mPictureFileName);
+//            Log.d(TAG, "onPreviewFrame: Not thing here");
+        }
+    };
+
+    public void showPreviewBytes(String fullPath, byte[] bytes){
+        Intent showPicture = new Intent(this, ShowPicture.class);
+        showPicture.putExtra("img_path", fullPath);
+        showPicture.putExtra("img_binary", bytes);
+        startActivity(showPicture);
+    }
+
+    public void showPreview(String fullPath){
+        Intent showPicture = new Intent(this, ShowPicture.class);
+        showPicture.putExtra("img_path", fullPath);
+        startActivity(showPicture);
+    }
 
     @Override
     public void onCameraViewStarted(int width, int height) {
@@ -134,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
 
         mRgba = inputFrame.rgba();
+
         switch (mOpenCvCameraView.getDisplay().getRotation()) {
             case Surface.ROTATION_0: // Vertical portrait
                 Core.transpose(mRgba, mRgbaT);
@@ -153,7 +188,25 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 break;
             default:
         }
+
+        if (takingPicture){
+//                Imgproc.Canny(mRgba, mRgbaF, 80, 100);
+                Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2GRAY, 4);
+            takePicture(mRgbaT);
+        }
+
         return mRgba;
+    }
+
+    public static List<Mat> cluster(Mat cutout, int k) {
+        Mat samples = cutout.reshape(1, cutout.cols() * cutout.rows());
+        Mat samples32f = new Mat();
+        samples.convertTo(samples32f, CvType.CV_32F, 1.0 / 255.0);
+        Mat labels = new Mat();
+        TermCriteria criteria = new TermCriteria(TermCriteria.COUNT, 100, 1);
+        Mat centers = new Mat();
+        Core.kmeans(samples32f, k, labels, criteria, 1, Core.KMEANS_PP_CENTERS, centers);
+        return showClusters(cutout, labels, centers);
     }
 
     @Override
