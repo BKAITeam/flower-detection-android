@@ -33,7 +33,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".views.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -43,7 +43,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ShowPicture">
+            android:name=".views.ShowPicture"
+            android:configChanges="orientation"
+            android:screenOrientation="landscape">
         </activity>
     </application>
 

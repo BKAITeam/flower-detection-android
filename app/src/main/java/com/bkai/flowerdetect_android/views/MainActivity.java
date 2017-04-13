@@ -1,15 +1,16 @@
-package com.bkai.flowerdetect_android;
+package com.bkai.flowerdetect_android.views;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
+import android.graphics.Bitmap;
+import android.hardware.Camera;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -17,28 +18,30 @@ import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
+
+import com.bkai.flowerdetect_android.R;
+import com.bkai.flowerdetect_android.logic.Cluster;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.TermCriteria;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static android.support.v7.appcompat.R.id.image;
 
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener {
@@ -55,13 +58,15 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private CameraView mOpenCvCameraView;
     private boolean mIsJavaCamera = true;
     private MenuItem mItemSwitchCamera = null;
+
     Mat mRgba;
     Mat mRgbaF;
     Mat mRgbaT;
 
+    public static final int RGBA = 1;
+
     ImageButton takePicure;
 
-    boolean takingPicture = false;
     String mPictureFileName;
 
     private BaseLoaderCallback mLoaderCallBack = new BaseLoaderCallback(this) {
@@ -87,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     123);
-            Log.e("Permission","Camera");
             return;
         }
     }
@@ -110,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         takePicure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takingPicture = true;
+                takePicture_byOpencv(mRgba);
             }
         });
     }
@@ -122,29 +126,30 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         File path = new File(sdcard+"/FlowerDetect/");
         path.mkdirs();
         mPictureFileName = sdcard + "/FlowerDetect/" + currentDateandTime + ".jpg";
-
-        Imgcodecs.imwrite(mPictureFileName, mRgba);
-//        mOpenCvCameraView.takePicture(mPictureFileName, mPreviewCallBack);
-        Log.e("Taking done", "");
-        takingPicture = false;
+        mOpenCvCameraView.takePicture(mPictureFileName, mPreviewCallBack);
         showPreview(mPictureFileName);
     }
 
+    private void takePicture_byOpencv(Mat mRgba){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        String currentDateandTime = sdf.format(new Date());
+        String sdcard = Environment.getExternalStorageDirectory().getPath();
+        File path = new File(sdcard+"/FlowerDetect/");
+        path.mkdirs();
+        mPictureFileName = sdcard + "/FlowerDetect/" + currentDateandTime + ".jpg";
+
+        Imgcodecs.imwrite(mPictureFileName, mRgba);
+        showPreview(mPictureFileName);
+    }
 
     android.hardware.Camera.PreviewCallback  mPreviewCallBack = new android.hardware.Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] bytes, android.hardware.Camera camera) {
             showPreview(mPictureFileName);
-//            Log.d(TAG, "onPreviewFrame: Not thing here");
+            Log.e(TAG, "mPreviewCallBack");
+//            showPreviewBinary(bytes);
         }
     };
-
-    public void showPreviewBytes(String fullPath, byte[] bytes){
-        Intent showPicture = new Intent(this, ShowPicture.class);
-        showPicture.putExtra("img_path", fullPath);
-        showPicture.putExtra("img_binary", bytes);
-        startActivity(showPicture);
-    }
 
     public void showPreview(String fullPath){
         Intent showPicture = new Intent(this, ShowPicture.class);
@@ -152,11 +157,22 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         startActivity(showPicture);
     }
 
+    public void showPreviewBinary(byte img[]){
+
+        ShowPicture.img_binary = img;
+        Intent intent = new Intent(this, ShowPicture.class);
+//        intent.putExtra("img_bytes",img);
+
+        startActivity(intent);
+    }
+
     @Override
     public void onCameraViewStarted(int width, int height) {
-        mRgba = new Mat(height, width, CvType.CV_8UC4);
-        mRgbaF = new Mat(height, width, CvType.CV_8UC4);
-        mRgbaT = new Mat(height, width, CvType.CV_8UC4);
+        mRgba = new Mat(height, width, CvType.CV_8UC3);
+        mRgbaF = new Mat(height, width, CvType.CV_8UC3);
+        mRgbaT = new Mat(height, width, CvType.CV_8UC3);
+        List<Camera.Size> resolutions = mOpenCvCameraView.getResolutionList();
+        mOpenCvCameraView.setResolution(resolutions.get(14));
     }
 
     @Override
@@ -189,24 +205,41 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             default:
         }
 
-        if (takingPicture){
-//                Imgproc.Canny(mRgba, mRgbaF, 80, 100);
-                Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2GRAY, 4);
-            takePicture(mRgbaT);
-        }
-
+//        if (takingPicture){
+////          Imgproc.Canny(mRgba, mRgbaF, 80, 100);
+////            Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2GRAY, 4);
+////            Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_YCrCb2RGB, 4);
+//
+//            Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2RGB, 4);
+//
+//            Mat resizeimage = new Mat();
+//
+//            Size size = mRgbaT.size();
+//            Imgproc.resize( mRgbaT, resizeimage, new Size(size.width/4, size.height/4));
+//
+//            List<Mat> clusters = new ArrayList<Mat>();
+//            clusters = Cluster.cluster(resizeimage, 3);
+//            takePicture_byOpencv(mRgbaT);
+//        }
+        previewProcess();
         return mRgba;
     }
 
-    public static List<Mat> cluster(Mat cutout, int k) {
-        Mat samples = cutout.reshape(1, cutout.cols() * cutout.rows());
-        Mat samples32f = new Mat();
-        samples.convertTo(samples32f, CvType.CV_32F, 1.0 / 255.0);
-        Mat labels = new Mat();
-        TermCriteria criteria = new TermCriteria(TermCriteria.COUNT, 100, 1);
-        Mat centers = new Mat();
-        Core.kmeans(samples32f, k, labels, criteria, 1, Core.KMEANS_PP_CENTERS, centers);
-        return showClusters(cutout, labels, centers);
+    void previewProcess(){
+//        Imgproc.Canny(mRgba, mRgbaF, 80, 100);
+//        Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2GRAY, 4);
+//        Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_YCrCb2RGB, 4);
+
+        Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2RGB, 4);
+
+//        Mat resizeimage = new Mat();
+
+//        Size size = mRgbaT.size();
+//        Imgproc.resize( mRgbaT, resizeimage, new Size(size.width/4, size.height/4));
+
+        List<Mat> clusters = new ArrayList<Mat>();
+        clusters = Cluster.cluster(mRgbaT, 3);
+        Imgproc.cvtColor(clusters.get(0), mRgba, Imgproc.COLOR_RGB2BGRA, 4);
     }
 
     @Override
@@ -241,4 +274,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         mOpenCvCameraView.focusOnTouch(motionEvent);
         return true;
     }
+
+
 }

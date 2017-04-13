@@ -1,4 +1,4 @@
-package com.bkai.flowerdetect_android;
+package com.bkai.flowerdetect_android.views;
 
 /**
  * Created by marsch on 3/1/17.
@@ -6,6 +6,7 @@ package com.bkai.flowerdetect_android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
@@ -18,7 +19,9 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 import org.opencv.android.JavaCameraView;
+import org.opencv.core.Mat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,18 +68,18 @@ public class CameraView extends JavaCameraView implements PictureCallback, AutoF
         return mCamera.getParameters().getPreviewSize();
     }
 
-    public void takePicture(final String fileName,Camera.PreviewCallback callback) {
+     public synchronized void takePicture(final String fileName,Camera.PreviewCallback callback) {
         this.mPictureFileName = fileName;
         // Postview and jpeg are sent in the same buffers if the queue is not empty when performing a capture.
         // Clear up buffers to avoid mCamera.takePicture to be stuck because of a memory issue
         mCamera.setPreviewCallback(callback);
 
         // PictureCallback is implemented by the current class
-        mCamera.takePicture(null, null, this);
+         mCamera.takePicture(null, null, this);
     }
 
     @Override
-    public void onPictureTaken(byte[] data, Camera camera) {
+    public synchronized void onPictureTaken(byte[] data, Camera camera) {
         // The camera preview was automatically stopped. Start it again.
         mCamera.startPreview();
         mCamera.setPreviewCallback(this);
@@ -99,6 +102,8 @@ public class CameraView extends JavaCameraView implements PictureCallback, AutoF
         showPicture.putExtra("img_path", fullPath);
         getContext().startActivity(showPicture);
     }
+
+
 
     @Override
     public void onAutoFocus(boolean b, Camera camera) {

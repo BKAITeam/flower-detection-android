@@ -1,4 +1,4 @@
-package com.bkai.flowerdetect_android;
+package com.bkai.flowerdetect_android.views;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,12 +14,15 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.bkai.flowerdetect_android.R;
+
 import java.io.File;
 
 public class ShowPicture extends AppCompatActivity {
 
     ImageView img_view;
     Toolbar toolbar;
+    public static byte img_binary[];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,21 +35,15 @@ public class ShowPicture extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        toolbar.setBackgroundColor(Color.parseColor("#0DBCBCBC"));
+        toolbar.setBackgroundColor(Color.parseColor("#873FB5A9"));
         toolbar.setTitleTextColor(Color.BLACK);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                finish();
-//            }
-//        });
-
         img_view = (ImageView) findViewById(R.id.img_view);
         show_image();
+//        show_image_from_bytes();
 
     }
 
@@ -55,20 +52,20 @@ public class ShowPicture extends AppCompatActivity {
     private void show_image(){
         Intent intent = getIntent();
         String img_src = intent.getStringExtra("img_path");
-//        byte[] img_binary = intent.getByteArrayExtra("img_binary");
-
-//        Bitmap bmp = BitmapFactory.decodeByteArray(img_binary, 0, img_binary.length);
-
 
         Log.e("File", img_src);
         File img_file = new File(img_src);
-
-
-
         Uri uri = Uri.fromFile(img_file);
 
         img_view.setImageURI(uri);
-//        img_view.setImageBitmap(bmp);
+    }
+
+    private void show_image_from_bytes(){
+        byte[] img_binary = ShowPicture.img_binary;
+
+        Bitmap bmp = BitmapFactory.decodeByteArray(img_binary, 0, img_binary.length);
+
+        img_view.setImageBitmap(bmp);
     }
 
 
