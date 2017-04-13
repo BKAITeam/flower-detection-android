@@ -20,7 +20,9 @@ import java.io.File;
 
 public class ShowPicture extends AppCompatActivity {
 
-    ImageView img_view;
+    ImageView img_view_1;
+    ImageView img_view_2;
+    ImageView img_view_3;
     Toolbar toolbar;
     public static byte img_binary[];
     @Override
@@ -35,13 +37,15 @@ public class ShowPicture extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        toolbar.setBackgroundColor(Color.parseColor("#873FB5A9"));
-        toolbar.setTitleTextColor(Color.BLACK);
+//        toolbar.setBackgroundColor(Color.parseColor("#873FB5A9"));
+//        toolbar.setTitleTextColor(Color.BLACK);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        img_view = (ImageView) findViewById(R.id.img_view);
+        img_view_1 = (ImageView) findViewById(R.id.img_view_1);
+        img_view_2 = (ImageView) findViewById(R.id.img_view_2);
+        img_view_3 = (ImageView) findViewById(R.id.img_view_3);
         show_image();
 //        show_image_from_bytes();
 
@@ -51,13 +55,22 @@ public class ShowPicture extends AppCompatActivity {
 
     private void show_image(){
         Intent intent = getIntent();
-        String img_src = intent.getStringExtra("img_path");
+        String img_src_1 = intent.getStringExtra("img_path_1");
+        String img_src_2 = intent.getStringExtra("img_path_2");
+        String img_src_3 = intent.getStringExtra("img_path_3");
 
-        Log.e("File", img_src);
-        File img_file = new File(img_src);
-        Uri uri = Uri.fromFile(img_file);
+        Log.e("File", img_src_1);
+        File img_file_1 = new File(img_src_1);
+        File img_file_2 = new File(img_src_2);
+        File img_file_3 = new File(img_src_3);
 
-        img_view.setImageURI(uri);
+        Uri uri_1 = Uri.fromFile(img_file_1);
+        Uri uri_2 = Uri.fromFile(img_file_2);
+        Uri uri_3 = Uri.fromFile(img_file_3);
+
+        img_view_1.setImageURI(uri_1);
+        img_view_2.setImageURI(uri_2);
+        img_view_3.setImageURI(uri_3);
     }
 
     private void show_image_from_bytes(){
@@ -65,7 +78,7 @@ public class ShowPicture extends AppCompatActivity {
 
         Bitmap bmp = BitmapFactory.decodeByteArray(img_binary, 0, img_binary.length);
 
-        img_view.setImageBitmap(bmp);
+        img_view_1.setImageBitmap(bmp);
     }
 
 

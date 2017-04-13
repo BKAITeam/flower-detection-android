@@ -6,7 +6,6 @@ package com.bkai.flowerdetect_android.views;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera;
@@ -17,11 +16,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.Toast;
-
 import org.opencv.android.JavaCameraView;
-import org.opencv.core.Mat;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,17 +89,13 @@ public class CameraView extends JavaCameraView implements PictureCallback, AutoF
         } catch (java.io.IOException e) {
             Log.e("PictureDemo", "Exception in photoCallback", e);
         }
-
     }
-
 
     public void showPreview(String fullPath){
         Intent showPicture = new Intent(getContext(), ShowPicture.class);
         showPicture.putExtra("img_path", fullPath);
         getContext().startActivity(showPicture);
     }
-
-
 
     @Override
     public void onAutoFocus(boolean b, Camera camera) {
