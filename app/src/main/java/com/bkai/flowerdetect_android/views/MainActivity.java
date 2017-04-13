@@ -50,9 +50,16 @@ public class MainActivity extends AppCompatActivity {
 
     void initComponent(){
         mFlowerList = new ArrayList<Flower>(Arrays.asList(
-                new Flower("Hoa Thiên Điểu", "Đây là hoa thiên điểu"),
-                new Flower("Hoa Mào gà", "Đây là hoa mào gà"),
-                new Flower("Hoa Sen", "Đây là hoa sen")));
+                new Flower("Hoa Thiên Điểu", "Đây là hoa Thiên Điểu"),
+                new Flower("Hoa Hướng Dương", "Đây là Hoa Hướng Dương"),
+                new Flower("Hoa Lyly", "Đây là Hoa Lyly"),
+                new Flower("Hoa Cẩm Tú Cầu", "Đây là Hoa Cẩm Tú Cầu"),
+                new Flower("Hoa Cúc Trắng", "Đây là Hoa Cúc Trắng"),
+                new Flower("Hoa Mào Gà", "Đây là Hoa Mào Gà"),
+                new Flower("Hoa Rum", "Đây là Hoa Rum"),
+                new Flower("Hoa Vạn Thọ", "Đây là Hoa Vạn Thọ"),
+                new Flower("Hoa Thược Dược", "Đây là Hoa Thược Dược"),
+                new Flower("Hoa Sen", "Đây là Hoa Sen")));
         mRecyclerView = (RecyclerView) findViewById(R.id.listFlower);
         mAdapter = new FlowerRecyclerViewAdapter(this,mFlowerList);
 

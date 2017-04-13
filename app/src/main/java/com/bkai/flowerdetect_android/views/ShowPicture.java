@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -34,14 +36,7 @@ public class ShowPicture extends AppCompatActivity {
 
         setContentView(R.layout.activity_show_picture);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-//        toolbar.setBackgroundColor(Color.parseColor("#873FB5A9"));
-//        toolbar.setTitleTextColor(Color.BLACK);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        setupToolBar();
 
         img_view_1 = (ImageView) findViewById(R.id.img_view_1);
         img_view_2 = (ImageView) findViewById(R.id.img_view_2);
@@ -50,7 +45,19 @@ public class ShowPicture extends AppCompatActivity {
 //        show_image_from_bytes();
 
     }
+    void setupToolBar(){
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
+    //        toolbar.setBackgroundColor(Color.parseColor("#873FB5A9"));
+    //        toolbar.setTitleTextColor(Color.BLACK);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
     private void show_image(){
         Intent intent = getIntent();
         String img_src_1 = intent.getStringExtra("img_path_1");
