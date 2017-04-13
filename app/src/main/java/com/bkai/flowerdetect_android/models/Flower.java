@@ -1,10 +1,12 @@
 package com.bkai.flowerdetect_android.models;
 
+import java.io.Serializable;
+
 /**
  * Created by marsch on 4/14/17.
  */
 
-public class Flower {
+public class Flower implements Serializable {
     String name;
     String description;
 

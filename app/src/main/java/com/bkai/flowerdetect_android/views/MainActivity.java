@@ -64,7 +64,11 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.SetOnItemClickListener(new FlowerRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(getApplicationContext(), mFlowerList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                Intent flowerDetail = new Intent(getApplicationContext(), FlowerDetail.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("flower", mFlowerList.get(position));
+                flowerDetail.putExtra("flower_package", bundle);
+                startActivity(flowerDetail);
             }
         });
 

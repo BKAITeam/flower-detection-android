@@ -51,8 +51,6 @@ public class ShowPicture extends AppCompatActivity {
 
     }
 
-
-
     private void show_image(){
         Intent intent = getIntent();
         String img_src_1 = intent.getStringExtra("img_path_1");
