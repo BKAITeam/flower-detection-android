@@ -138,11 +138,13 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
 
         List<Mat> clusters = new ArrayList<Mat>();
         Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2RGB, 4);
+
         clusters = Cluster.cluster(mRgbaT, 3);
 
         Imgcodecs.imwrite(mPictureFileName_1, clusters.get(0));
         Imgcodecs.imwrite(mPictureFileName_2, clusters.get(1));
         Imgcodecs.imwrite(mPictureFileName_3, clusters.get(2));
+
         showPreview(mPictureFileName_1, mPictureFileName_2, mPictureFileName_3);
     }
 
@@ -155,7 +157,8 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
     };
 
     public void showPreview(String img_1, String img_2, String img_3){
-        Intent showPicture = new Intent(this, ShowPicture.class);
+//        Intent showPicture = new Intent(this, ShowPicture.class);
+        Intent showPicture = new Intent(this, ChoosePictureActivity.class);
         showPicture.putExtra("img_path_1", img_1);
         showPicture.putExtra("img_path_2", img_2);
         showPicture.putExtra("img_path_3", img_3);
@@ -168,7 +171,7 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
         mRgbaF = new Mat(height, width, CvType.CV_8UC3);
         mRgbaT = new Mat(height, width, CvType.CV_8UC3);
         List<Camera.Size> resolutions = mOpenCvCameraView.getResolutionList();
-        mOpenCvCameraView.setResolution(resolutions.get(13));
+        mOpenCvCameraView.setResolution(resolutions.get(10));
     }
 
     @Override
@@ -184,18 +187,18 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
         switch (mOpenCvCameraView.getDisplay().getRotation()) {
             case Surface.ROTATION_0: // Vertical portrait
                 Core.transpose(mRgba, mRgbaT);
-                Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
+                Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0, 0, 0);
                 Core.flip(mRgbaF, mRgba, 2);
                 break;
             case Surface.ROTATION_90: // 90° anti-clockwise
                 break;
             case Surface.ROTATION_180: // Vertical anti-portrait
                 Core.transpose(mRgba, mRgbaT);
-                Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
+                Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0, 0, 0);
                 Core.flip(mRgbaF, mRgba, 0);
                 break;
             case Surface.ROTATION_270: // 90° clockwise
-                Imgproc.resize(mRgba, mRgbaF, mRgbaF.size(), 0,0, 0);
+                Imgproc.resize(mRgba, mRgbaF, mRgbaF.size(), 0, 0, 0);
                 Core.flip(mRgbaF, mRgba, -1);
                 break;
             default:

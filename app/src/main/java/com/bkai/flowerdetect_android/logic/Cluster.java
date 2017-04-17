@@ -61,7 +61,7 @@ public class Cluster {
                 int g = (int)centers.get(label, 1)[0];
                 int b = (int)centers.get(label, 0)[0];
                 counts.put(label, counts.get(label) + 1);
-                clusters.get(label).put(y, x, b, g, r);
+                clusters.get(label).put(y, x, cutout.get(y,x));
                 rows++;
             }
         }
