@@ -1,9 +1,12 @@
 package com.bkai.flowerdetect.views;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +18,9 @@ import android.widget.Toast;
 
 import com.bkai.flowerdetect.R;
 import com.bkai.flowerdetect.adapters.GridViewPicturesAdapter;
+import com.bkai.flowerdetect.database.DBHelper;
+import com.bkai.flowerdetect.logic.Prediction;
+import com.bkai.flowerdetect.models.Flower;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,11 +30,14 @@ public class ChoosePictureActivity extends AppCompatActivity {
     GridViewPicturesAdapter mGridViewPictureAdapter;
     GridView gridView;
     Toolbar toolbar;
+    ProgressDialog _waiting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_picture);
+
+        _waiting = new ProgressDialog( ChoosePictureActivity.this,  R.style.AppTheme_Dark_Dialog);
 
         gridView = (GridView) findViewById(R.id.gridview);
         mGridViewPictureAdapter = new GridViewPicturesAdapter(this, R.layout.grid_view_item_picture, getData());
@@ -36,11 +45,37 @@ public class ChoosePictureActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(), "Click " + String.valueOf(i), Toast.LENGTH_SHORT).show();
+                _waiting.setIndeterminate(true);
+                _waiting.setMessage("Detecting...");
+                _waiting.show();
+                Prediction prediction = new Prediction(_hander);
+                prediction.start();
             }
         });
+
         setupToolBar();
     }
+
+    private final Handler _hander = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            String name = msg.getData().getString("result");
+            DBHelper db = new DBHelper(getApplicationContext());
+
+            Flower flower = db.getFlowerById(Integer.parseInt(name));
+            Log.e("Prediction result", flower.getName());
+            _waiting.dismiss();
+
+            Intent flowerDetail = new Intent(getApplicationContext(), FlowerDetail.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("flower", flower);
+            flowerDetail.putExtra("flower_package", bundle);
+            startActivity(flowerDetail);
+
+        }
+    };
 
     void setupToolBar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);

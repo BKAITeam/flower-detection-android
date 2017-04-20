@@ -222,4 +222,24 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return flowers;
     }
+
+    public Flower getFlowerById(int id){
+        Flower flower = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String queryById  = "SELECT * FROM " + TABLE_FLOWER
+                + " WHERE ID = " + id;
+        Cursor cursor = null;
+        cursor = db.rawQuery(queryById, null);
+
+        cursor.moveToFirst();
+
+        if (cursor.getCount()>0) {
+            flower = new Flower(cursor.getString(cursor.getColumnIndex(KEY_NAME)),
+                    cursor.getString(cursor.getColumnIndex(KEY_SCIENCE_NAME)),
+                    cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION))
+            );
+        }
+
+        return flower;
+    }
 }

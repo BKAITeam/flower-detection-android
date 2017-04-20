@@ -23,6 +23,7 @@ public class ShowPicture extends AppCompatActivity {
     ImageView img_view_3;
     Toolbar toolbar;
     public static byte img_binary[];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +42,7 @@ public class ShowPicture extends AppCompatActivity {
 //        show_image_from_bytes();
 
     }
+
     void setupToolBar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,6 +56,7 @@ public class ShowPicture extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
+
     private void show_image(){
         Intent intent = getIntent();
         String img_src_1 = intent.getStringExtra("img_path_1");
