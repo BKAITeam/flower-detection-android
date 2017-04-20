@@ -5,9 +5,9 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.bkai.flowerdetect_android.views.DetectActivity">
+    tools:context="com.bkai.flowerdetect.views.DetectActivity">
 
-    <com.bkai.flowerdetect_android.views.CameraView
+    <com.bkai.flowerdetect.views.CameraView
         android:id="@+id/CameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

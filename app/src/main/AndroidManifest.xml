@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bkai.flowerdetect_android">
+    package="com.bkai.flowerdetect">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.hardware.camera.autofocus" />
@@ -32,20 +32,20 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.MainActivity">
+        <activity android:name="com.bkai.flowerdetect.views.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.ShowPicture" />
+        <activity android:name="com.bkai.flowerdetect.views.ShowPicture" />
         <activity
-            android:name=".views.DetectActivity"
+            android:name="com.bkai.flowerdetect.views.DetectActivity"
             android:configChanges="orientation"
             android:screenOrientation="landscape" />
-        <activity android:name=".views.FlowerDetail" />
-        <activity android:name=".views.ChoosePictureActivity"></activity>
+        <activity android:name="com.bkai.flowerdetect.views.FlowerDetail" />
+        <activity android:name="com.bkai.flowerdetect.views.ChoosePictureActivity"></activity>
     </application>
 
 </manifest>
