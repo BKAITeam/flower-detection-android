@@ -32,10 +32,10 @@ public class Prediction extends Thread {
     public void predict(){
         long sum = 0;
 
-        for(int i=0;i< 1000000000; i++){
-            sum += 1;
-        }
+//        for(int i=0;i< 1000000000; i++){
+//            sum += 1;
+//        }
         Random rand = new Random();
-        this.result = String.valueOf(rand.nextInt(11));
+        this.result = String.valueOf(rand.nextInt(10)+1);
     }
 }

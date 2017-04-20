@@ -50,9 +50,6 @@ public class ShowPicture extends AppCompatActivity {
         final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
-    //        toolbar.setBackgroundColor(Color.parseColor("#873FB5A9"));
-    //        toolbar.setTitleTextColor(Color.BLACK);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }

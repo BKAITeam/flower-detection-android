@@ -1,10 +1,14 @@
 package com.bkai.flowerdetect.views;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +23,9 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 import com.bkai.flowerdetect.R;
+import com.bkai.flowerdetect.database.DBHelper;
 import com.bkai.flowerdetect.logic.Cluster;
+import com.bkai.flowerdetect.models.Flower;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -36,6 +42,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.bkai.flowerdetect.R.id.takePicture;
 
 
 public class DetectActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener {
@@ -56,7 +64,7 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
     Mat mRgba;
     Mat mRgbaF;
     Mat mRgbaT;
-
+    ProgressDialog _waiting;
     public static final int RGBA = 1;
 
     ImageButton takePicure;
@@ -100,17 +108,26 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.detect_main);
 
+        _waiting = new ProgressDialog( DetectActivity.this,  R.style.AppTheme_Dark_Dialog);
+        _waiting.setCancelable(false);
+
         mOpenCvCameraView = (CameraView) findViewById(R.id.CameraView);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setFocusable(true);
         mOpenCvCameraView.setOnTouchListener(DetectActivity.this);
 
-        takePicure = (ImageButton) findViewById(R.id.takePicture);
+        takePicure = (ImageButton) findViewById(takePicture);
         takePicure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePicture_byOpencv(mRgba);
+                Log.e("Cluster", "Begin");
+                _waiting.setIndeterminate(true);
+//                _waiting.setMessage("Processing...");
+                _waiting.show();
+                new MyAsyncTakePicture().execute();
+//                takePicture_byOpencv(mRgba);
+
             }
         });
     }
@@ -123,27 +140,39 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
         path.mkdirs();
         mPictureFileName_1 = sdcard + "/FlowerDetect/" + currentDateandTime + ".jpg";
         mOpenCvCameraView.takePicture(mPictureFileName_1, mPreviewCallBack);
-//        showPreview(mPictureFileName_1);
+    }
+
+    class MyAsyncTakePicture extends AsyncTask{
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            takePicture_byOpencv(mRgba);
+            return null;
+        }
     }
 
     private void takePicture_byOpencv(Mat mRgba){
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         String currentDateandTime = sdf.format(new Date());
         String sdcard = Environment.getExternalStorageDirectory().getPath();
         File path = new File(sdcard+"/FlowerDetect/");
         path.mkdirs();
+
         mPictureFileName_1 = sdcard + "/FlowerDetect/" + currentDateandTime + "_1.jpg";
         mPictureFileName_2 = sdcard + "/FlowerDetect/" + currentDateandTime + "_2.jpg";
         mPictureFileName_3 = sdcard + "/FlowerDetect/" + currentDateandTime + "_3.jpg";
 
-        List<Mat> clusters = new ArrayList<Mat>();
         Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2RGB, 4);
+        Imgproc.cvtColor(mRgbaT, mRgbaT, Imgproc.COLOR_RGB2BGR, 4);
 
-        clusters = Cluster.cluster(mRgbaT, 3);
+        Cluster cluster = new Cluster(_hander, mRgbaT, 3);
+        cluster.run();
+//        clusters = new Cluster(_hander).cluster(mRgbaT, 3);
 
-        Imgcodecs.imwrite(mPictureFileName_1, clusters.get(0));
-        Imgcodecs.imwrite(mPictureFileName_2, clusters.get(1));
-        Imgcodecs.imwrite(mPictureFileName_3, clusters.get(2));
+        Imgcodecs.imwrite(mPictureFileName_1, cluster.getClusters().get(0));
+        Imgcodecs.imwrite(mPictureFileName_2, cluster.getClusters().get(1));
+        Imgcodecs.imwrite(mPictureFileName_3, cluster.getClusters().get(2));
 
         showPreview(mPictureFileName_1, mPictureFileName_2, mPictureFileName_3);
     }
@@ -157,7 +186,6 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
     };
 
     public void showPreview(String img_1, String img_2, String img_3){
-//        Intent showPicture = new Intent(this, ShowPicture.class);
         Intent showPicture = new Intent(this, ChoosePictureActivity.class);
         showPicture.putExtra("img_path_1", img_1);
         showPicture.putExtra("img_path_2", img_2);
@@ -171,7 +199,7 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
         mRgbaF = new Mat(height, width, CvType.CV_8UC3);
         mRgbaT = new Mat(height, width, CvType.CV_8UC3);
         List<Camera.Size> resolutions = mOpenCvCameraView.getResolutionList();
-        mOpenCvCameraView.setResolution(resolutions.get(resolutions.size()-1));
+//        mOpenCvCameraView.setResolution(resolutions.get(resolutions.size()-1));
     }
 
     @Override
@@ -208,10 +236,18 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
         return mRgba;
     }
 
+    private final Handler _hander = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Log.e("CLUSTER", "DONE");
+            _waiting.dismiss();
+        }
+    };
+
     void previewProcess(){
 //        Imgproc.Canny(mRgba, mRgbaF, 80, 100);
 //        Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2GRAY, 4);
-//        Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_YCrCb2RGB, 4);
 
         Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2RGB, 4);
 
@@ -221,7 +257,7 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
 //        Imgproc.resize( mRgbaT, resizeimage, new Size(size.width/4, size.height/4));
 
         List<Mat> clusters = new ArrayList<Mat>();
-        clusters = Cluster.cluster(mRgbaT, 3);
+//        clusters = new Cluster(_hander).cluster(mRgbaT, 3);
         Imgproc.cvtColor(clusters.get(0), mRgba, Imgproc.COLOR_RGB2BGRA, 4);
     }
 

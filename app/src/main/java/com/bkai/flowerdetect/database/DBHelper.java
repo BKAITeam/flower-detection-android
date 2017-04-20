@@ -42,7 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_ID = "id";
     private static final String KEY_SCIENCE_NAME = "science_name";
     private static final String KEY_NAME = "name";
-    private static final String KEY_DESCRIPTION = "name";
+    private static final String KEY_DESCRIPTION = "description";
 
     // Table create Statements
     private static final String CREATE_TABLE_FLOWER = "CREATE TABLE "
@@ -214,7 +214,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         while(!cursor.isAfterLast()){
-            flowers.add(new Flower(cursor.getString(cursor.getColumnIndex(KEY_NAME)),
+            flowers.add(new Flower(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+                                    cursor.getString(cursor.getColumnIndex(KEY_NAME)),
                                     cursor.getString(cursor.getColumnIndex(KEY_SCIENCE_NAME)),
                                     cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION))
             ));
@@ -234,7 +235,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         if (cursor.getCount()>0) {
-            flower = new Flower(cursor.getString(cursor.getColumnIndex(KEY_NAME)),
+            flower = new Flower(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+                    cursor.getString(cursor.getColumnIndex(KEY_NAME)),
                     cursor.getString(cursor.getColumnIndex(KEY_SCIENCE_NAME)),
                     cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION))
             );

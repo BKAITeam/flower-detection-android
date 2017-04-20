@@ -1,6 +1,8 @@
 package com.bkai.flowerdetect.views;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,10 +47,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(openCamera);
             }
         });
-
+        setupToolBar();
         initComponent();
     }
-
+    void setupToolBar(){
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(4);
+        }
+        setSupportActionBar(toolbar);
+    }
     void initComponent(){
 
         db = new DBHelper(getApplicationContext());

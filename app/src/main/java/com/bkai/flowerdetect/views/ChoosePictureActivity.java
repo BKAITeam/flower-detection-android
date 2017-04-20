@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.bkai.flowerdetect.R;
 import com.bkai.flowerdetect.adapters.GridViewPicturesAdapter;
@@ -38,6 +37,7 @@ public class ChoosePictureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_choose_picture);
 
         _waiting = new ProgressDialog( ChoosePictureActivity.this,  R.style.AppTheme_Dark_Dialog);
+        _waiting.setCancelable(false);
 
         gridView = (GridView) findViewById(R.id.gridview);
         mGridViewPictureAdapter = new GridViewPicturesAdapter(this, R.layout.grid_view_item_picture, getData());
@@ -65,7 +65,6 @@ public class ChoosePictureActivity extends AppCompatActivity {
             DBHelper db = new DBHelper(getApplicationContext());
 
             Flower flower = db.getFlowerById(Integer.parseInt(name));
-            Log.e("Prediction result", flower.getName());
             _waiting.dismiss();
 
             Intent flowerDetail = new Intent(getApplicationContext(), FlowerDetail.class);
@@ -83,10 +82,6 @@ public class ChoosePictureActivity extends AppCompatActivity {
 
         final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
-
-        //        toolbar.setBackgroundColor(Color.parseColor("#873FB5A9"));
-        //        toolbar.setTitleTextColor(Color.BLACK);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
