@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -86,7 +87,7 @@ public class FlowerDetail extends AppCompatActivity {
 
         flower_name.setText(mFlower.getName());
         flower_science_name.setText(mFlower.getScienceName());
-        flower_description.setText(mFlower.getDescription());
+        flower_description.setText(Html.fromHtml(mFlower.getDescription()));
     }
 
     public static Bitmap getBitmapFromAsset(Context context, String filePath) {

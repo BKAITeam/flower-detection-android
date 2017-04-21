@@ -108,7 +108,7 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.detect_main);
 
-        _waiting = new ProgressDialog( DetectActivity.this,  R.style.AppTheme_Dark_Dialog);
+        _waiting = new ProgressDialog( DetectActivity.this,  R.style.AppTheme_Transparent_Dialog);
         _waiting.setCancelable(false);
 
         mOpenCvCameraView = (CameraView) findViewById(R.id.CameraView);
@@ -198,7 +198,7 @@ public class DetectActivity extends AppCompatActivity implements CameraBridgeVie
         mRgba = new Mat(height, width, CvType.CV_8UC3);
         mRgbaF = new Mat(height, width, CvType.CV_8UC3);
         mRgbaT = new Mat(height, width, CvType.CV_8UC3);
-        List<Camera.Size> resolutions = mOpenCvCameraView.getResolutionList();
+//        List<Camera.Size> resolutions = mOpenCvCameraView.getResolutionList();
 //        mOpenCvCameraView.setResolution(resolutions.get(resolutions.size()-1));
     }
 

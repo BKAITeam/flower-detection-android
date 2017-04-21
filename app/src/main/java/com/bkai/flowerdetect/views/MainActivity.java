@@ -1,9 +1,13 @@
 package com.bkai.flowerdetect.views;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         });
         setupToolBar();
         initComponent();
+        checkPermission();
     }
     void setupToolBar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -56,6 +61,14 @@ public class MainActivity extends AppCompatActivity {
             toolbar.setElevation(4);
         }
         setSupportActionBar(toolbar);
+    }
+    private void checkPermission(){
+        int hasWriteContactsPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    123);
+            return;
+        }
     }
     void initComponent(){
 

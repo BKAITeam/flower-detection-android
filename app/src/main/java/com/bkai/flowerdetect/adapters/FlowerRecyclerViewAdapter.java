@@ -2,6 +2,7 @@ package com.bkai.flowerdetect.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,7 @@ public class FlowerRecyclerViewAdapter extends RecyclerView.Adapter<FlowerMyhold
         final Flower item = list.get(position);
 
         holder.flower_name.setText(item.getName());
-        holder.flower_description.setText(item.getDescription());
+        holder.flower_description.setText(Html.fromHtml(item.getDescription()));
     }
 
     public interface OnItemClickListener {
