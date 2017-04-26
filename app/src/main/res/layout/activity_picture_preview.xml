@@ -34,27 +34,22 @@
 
         <ImageButton
             android:src="@drawable/ic_arrow_upward_black_24dp"
-            android:id="@+id/btn_back"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Back"
-            android:background="@color/colorPrimary"
-             />
-
-        <ImageButton
-            android:src="@drawable/ic_arrow_downward_black_24dp"
             android:id="@+id/btn_next"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Next"
-            android:backgroundTintMode="multiply"
-            android:hapticFeedbackEnabled="true"
-            android:backgroundTint="@color/colorAccent"
             android:background="@color/colorPrimary"
              />
-
+        <ImageButton
+            android:src="@drawable/ic_arrow_downward_black_24dp"
+            android:id="@+id/btn_back"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:backgroundTintMode="multiply"
+            android:hapticFeedbackEnabled="true"
+            android:background="@color/colorPrimary"
+             />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

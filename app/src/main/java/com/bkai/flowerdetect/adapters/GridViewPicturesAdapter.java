@@ -2,6 +2,7 @@ package com.bkai.flowerdetect.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,8 +47,9 @@ public class GridViewPicturesAdapter extends ArrayAdapter {
             holder = (ViewHolder) row.getTag();
         }
 
-        Uri item = (Uri) data.get(position);
-        holder.image.setImageURI(item);
+        Bitmap item = (Bitmap) data.get(position);
+//        holder.image.setImageURI(item);
+        holder.image.setImageBitmap(item);
         return row;
     }
 

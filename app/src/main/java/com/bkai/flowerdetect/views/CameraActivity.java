@@ -136,7 +136,6 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     }
 
     class MyAsyncTakePicture extends AsyncTask{
-
         @Override
         protected Object doInBackground(Object[] objects) {
             takePicture_byOpencv(mRgba);

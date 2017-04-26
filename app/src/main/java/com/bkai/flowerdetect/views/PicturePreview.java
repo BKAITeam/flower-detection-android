@@ -12,12 +12,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bkai.flowerdetect.R;
+import com.bkai.flowerdetect.logic.Cluster;
+
+import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 
@@ -29,6 +33,9 @@ public class PicturePreview extends AppCompatActivity {
     ProgressDialog _waiting;
 
     ImageButton btn_next;
+    ImageButton btn_back;
+
+    String mPictureFileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,21 @@ public class PicturePreview extends AppCompatActivity {
         _waiting.setCancelable(false);
 
         btn_next = (ImageButton) findViewById(R.id.btn_next);
+        btn_back = (ImageButton) findViewById(R.id.btn_back);
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        btn_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cluster();
+            }
+        });
 
         img_view = (ImageView) findViewById(R.id.img_picture_preview);
         show_image();
@@ -59,12 +81,18 @@ public class PicturePreview extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
+    public void cluster(){
+        Intent showPicture = new Intent(this, KmeanView.class);
+        showPicture.putExtra("img_path", mPictureFileName);
+        startActivity(showPicture);
+    }
+
     private void show_image(){
         Intent intent = getIntent();
-        String img_src_1 = intent.getStringExtra("img_path");
+        mPictureFileName = intent.getStringExtra("img_path");
 
-        Log.e("File", img_src_1);
-        File img_file_1 = new File(img_src_1);
+        Log.e("File", mPictureFileName);
+        File img_file_1 = new File(mPictureFileName);
 
         Uri uri_1 = Uri.fromFile(img_file_1);
 

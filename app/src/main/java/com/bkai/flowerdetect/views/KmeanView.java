@@ -18,8 +18,15 @@ import android.widget.GridView;
 import com.bkai.flowerdetect.R;
 import com.bkai.flowerdetect.adapters.GridViewPicturesAdapter;
 import com.bkai.flowerdetect.database.DBHelper;
+import com.bkai.flowerdetect.logic.Cluster;
 import com.bkai.flowerdetect.logic.Prediction;
 import com.bkai.flowerdetect.models.Flower;
+
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,6 +45,9 @@ public class KmeanView extends AppCompatActivity {
 
         _waiting = new ProgressDialog( KmeanView.this,  R.style.AppTheme_Dark_Dialog);
         _waiting.setCancelable(false);
+        _waiting.setIndeterminate(true);
+        _waiting.setMessage("Please wait ...");
+        _waiting.show();
 
         gridView = (GridView) findViewById(R.id.gridview);
         mGridViewPictureAdapter = new GridViewPicturesAdapter(this, R.layout.grid_cluster_view, getData());
@@ -48,7 +58,7 @@ public class KmeanView extends AppCompatActivity {
                 _waiting.setIndeterminate(true);
                 _waiting.setMessage("Detecting...");
                 _waiting.show();
-                Prediction prediction = new Prediction(_hander);
+                Prediction prediction = new Prediction(_handerPrediction);
                 prediction.start();
             }
         });
@@ -56,7 +66,7 @@ public class KmeanView extends AppCompatActivity {
         setupToolBar();
     }
 
-    private final Handler _hander = new Handler() {
+    private final Handler _handerPrediction = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -72,7 +82,15 @@ public class KmeanView extends AppCompatActivity {
             bundle.putSerializable("flower", flower);
             flowerDetail.putExtra("flower_package", bundle);
             startActivity(flowerDetail);
+        }
+    };
 
+    private final Handler _hander = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Log.e("CLUSTER", "DONE");
+            _waiting.dismiss();
         }
     };
 
@@ -89,22 +107,28 @@ public class KmeanView extends AppCompatActivity {
     private ArrayList<Bitmap> getData(){
         ArrayList result = new ArrayList();
         Intent intent = getIntent();
-        String img_src_1 = intent.getStringExtra("img_path_1");
-        String img_src_2 = intent.getStringExtra("img_path_2");
-        String img_src_3 = intent.getStringExtra("img_path_3");
+        String img_src = intent.getStringExtra("img_path");
 
-        Log.e("File", img_src_1);
-        File img_file_1 = new File(img_src_1);
-        File img_file_2 = new File(img_src_2);
-        File img_file_3 = new File(img_src_3);
+        Mat mRbga = Imgcodecs.imread(img_src);
+        Mat mRgbaF = new Mat(mRbga.size(), CvType.CV_8UC3);
 
-        Uri uri_1 = Uri.fromFile(img_file_1);
-        Uri uri_2 = Uri.fromFile(img_file_2);
-        Uri uri_3 = Uri.fromFile(img_file_3);
+        Cluster cluster = new Cluster(_hander, mRbga, 3);
+        cluster.run();
 
-        result.add(uri_1);
-        result.add(uri_2);
-        result.add(uri_3);
+        mRgbaF = cluster.getClusters().get(0);
+        Bitmap bmp = Bitmap.createBitmap(mRgbaF.cols(), mRgbaF.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mRgbaF, bmp);
+        result.add(bmp);
+
+        mRgbaF = cluster.getClusters().get(1);
+        bmp = Bitmap.createBitmap(mRgbaF.cols(), mRgbaF.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mRgbaF, bmp);
+        result.add(bmp);
+
+        mRgbaF = cluster.getClusters().get(2);
+        bmp = Bitmap.createBitmap(mRgbaF.cols(), mRgbaF.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mRgbaF, bmp);
+        result.add(bmp);
 
         return  result;
     }
