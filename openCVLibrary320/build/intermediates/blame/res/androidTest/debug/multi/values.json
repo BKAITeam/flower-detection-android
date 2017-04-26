@@ -2,5 +2,9 @@
     {
         "outputFile": "/Users/marsch/Projects/BKAITeam/flowerdetect/openCVLibrary320/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values/values.xml",
         "map": []
+    },
+    {
+        "outputFile": "/home/marsch/Projects/BKAI/flowerdetect/openCVLibrary320/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values/values.xml",
+        "map": []
     }
 ]

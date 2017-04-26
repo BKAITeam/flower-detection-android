@@ -57,7 +57,7 @@ public class FlowerRecyclerViewAdapter extends RecyclerView.Adapter<FlowerMyhold
 
     @Override
     public FlowerMyholder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.flower_card_view,parent,false);
+        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_flower,parent,false);
 
         return new FlowerMyholder(item, mItemClickListener);
     }

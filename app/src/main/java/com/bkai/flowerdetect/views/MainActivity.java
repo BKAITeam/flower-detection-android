@@ -3,7 +3,6 @@ package com.bkai.flowerdetect.views;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -14,7 +13,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.bkai.flowerdetect.R;
@@ -22,8 +20,6 @@ import com.bkai.flowerdetect.adapters.FlowerRecyclerViewAdapter;
 import com.bkai.flowerdetect.database.DBHelper;
 import com.bkai.flowerdetect.models.Flower;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         openCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openCamera = new Intent(getApplicationContext(), DetectActivity.class);
+                Intent openCamera = new Intent(getApplicationContext(), CameraActivity.class);
                 startActivity(openCamera);
             }
         });
