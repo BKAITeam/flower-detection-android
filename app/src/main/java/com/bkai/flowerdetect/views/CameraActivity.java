@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
@@ -152,18 +153,12 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         path.mkdirs();
 
         mPictureFileName = sdcard + "/FlowerDetect/" + currentDateandTime + "_1.jpg";
-//        mPictureFileName_2 = sdcard + "/FlowerDetect/" + currentDateandTime + "_2.jpg";
-//        mPictureFileName_3 = sdcard + "/FlowerDetect/" + currentDateandTime + "_3.jpg";
 
         Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2RGB, 4);
         Imgproc.cvtColor(mRgbaT, mRgbaT, Imgproc.COLOR_RGB2BGR, 4);
 
-//        Cluster cluster = new Cluster(_hander, mRgbaT, 3);
-//        cluster.run();
 
         Imgcodecs.imwrite(mPictureFileName, mRgbaT);
-//        Imgcodecs.imwrite(mPictureFileName_2, cluster.getClusters().get(1));
-//        Imgcodecs.imwrite(mPictureFileName_3, cluster.getClusters().get(2));
 
         showPreview(mPictureFileName);
     }
@@ -178,9 +173,13 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
 
     public void showPreview(String img_path){
         Intent showPicture = new Intent(this, PicturePreview.class);
+
+        File img_file = new File(img_path);
+        Uri img_uri = Uri.fromFile(img_file);
+
+//        showPicture.putExtra("img_uri", img_uri.toString());
         showPicture.putExtra("img_path", img_path);
-//        showPicture.putExtra("img_path_2", img_2);
-//        showPicture.putExtra("img_path_3", img_3);
+
         startActivity(showPicture);
     }
 

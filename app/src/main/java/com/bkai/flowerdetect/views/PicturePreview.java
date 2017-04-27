@@ -2,12 +2,14 @@ package com.bkai.flowerdetect.views;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +26,8 @@ import com.bkai.flowerdetect.logic.Cluster;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class PicturePreview extends AppCompatActivity {
 
@@ -51,6 +55,9 @@ public class PicturePreview extends AppCompatActivity {
 
         btn_next = (ImageButton) findViewById(R.id.btn_next);
         btn_back = (ImageButton) findViewById(R.id.btn_back);
+        img_view = (ImageView) findViewById(R.id.img_picture_preview);
+
+        show_image();
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,8 +73,6 @@ public class PicturePreview extends AppCompatActivity {
             }
         });
 
-        img_view = (ImageView) findViewById(R.id.img_picture_preview);
-        show_image();
     }
 
     void setupToolBar(){
@@ -82,6 +87,8 @@ public class PicturePreview extends AppCompatActivity {
     }
 
     public void cluster(){
+        Intent intent = getIntent();
+        mPictureFileName = intent.getStringExtra("img_path");
         Intent showPicture = new Intent(this, KmeanView.class);
         showPicture.putExtra("img_path", mPictureFileName);
         startActivity(showPicture);
@@ -90,13 +97,9 @@ public class PicturePreview extends AppCompatActivity {
     private void show_image(){
         Intent intent = getIntent();
         mPictureFileName = intent.getStringExtra("img_path");
-
-        Log.e("File", mPictureFileName);
-        File img_file_1 = new File(mPictureFileName);
-
-        Uri uri_1 = Uri.fromFile(img_file_1);
-
-        img_view.setImageURI(uri_1);
+        File file = new File(mPictureFileName);
+        Uri uri = Uri.fromFile(file);
+        img_view.setImageURI(uri);
     }
 
     private final Handler _hander = new Handler() {
@@ -107,6 +110,18 @@ public class PicturePreview extends AppCompatActivity {
             _waiting.dismiss();
         }
     };
+
+    public String getPathFromUri(Uri uri)
+    {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor == null) return null;
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String s=cursor.getString(column_index);
+        cursor.close();
+        return s;
+    }
 
      @Override
     public boolean onSupportNavigateUp() {

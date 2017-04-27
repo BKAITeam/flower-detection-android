@@ -84,8 +84,8 @@ public class Cluster extends Thread {
                 int g = (int)centers.get(label, 1)[0];
                 int b = (int)centers.get(label, 0)[0];
                 counts.put(label, counts.get(label) + 1);
-//                clusters.get(label).put(y, x, cutout.get(y,x));
-                clusters.get(label).put(y, x, r, g, b);
+                clusters.get(label).put(y, x, cutout.get(y,x));
+//                clusters.get(label).put(y, x, r, g, b);
                 rows++;
             }
         }

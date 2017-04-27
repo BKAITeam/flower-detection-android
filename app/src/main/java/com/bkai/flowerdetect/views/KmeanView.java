@@ -43,15 +43,23 @@ public class KmeanView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kmean_view);
 
-        _waiting = new ProgressDialog( KmeanView.this,  R.style.AppTheme_Dark_Dialog);
+        _waiting = new ProgressDialog(KmeanView.this,  R.style.AppTheme_Dark_Dialog);
         _waiting.setCancelable(false);
+
         _waiting.setIndeterminate(true);
         _waiting.setMessage("Please wait ...");
+
+        setUGridView();
+        setupToolBar();
+    }
+
+    void setUGridView(){
         _waiting.show();
 
         gridView = (GridView) findViewById(R.id.gridview);
         mGridViewPictureAdapter = new GridViewPicturesAdapter(this, R.layout.grid_cluster_view, getData());
         gridView.setAdapter(mGridViewPictureAdapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -62,8 +70,6 @@ public class KmeanView extends AppCompatActivity {
                 prediction.start();
             }
         });
-
-        setupToolBar();
     }
 
     private final Handler _handerPrediction = new Handler() {
@@ -94,7 +100,7 @@ public class KmeanView extends AppCompatActivity {
         }
     };
 
-    void setupToolBar(){
+    void setupToolBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -108,9 +114,12 @@ public class KmeanView extends AppCompatActivity {
         ArrayList result = new ArrayList();
         Intent intent = getIntent();
         String img_src = intent.getStringExtra("img_path");
+        Log.e("FILE", img_src);
 
         Mat mRbga = Imgcodecs.imread(img_src);
         Mat mRgbaF = new Mat(mRbga.size(), CvType.CV_8UC3);
+
+        Imgproc.cvtColor(mRbga, mRbga, Imgproc.COLOR_RGB2BGR, 4);
 
         Cluster cluster = new Cluster(_hander, mRbga, 3);
         cluster.run();

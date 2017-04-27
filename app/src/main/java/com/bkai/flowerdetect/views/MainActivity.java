@@ -3,8 +3,11 @@ package com.bkai.flowerdetect.views;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
-import android.support.design.widget.FloatingActionButton;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +17,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.bkai.flowerdetect.R;
 import com.bkai.flowerdetect.adapters.FlowerRecyclerViewAdapter;
 import com.bkai.flowerdetect.database.DBHelper;
 import com.bkai.flowerdetect.models.Flower;
+import com.github.clans.fab.FloatingActionButton;
 
+import java.io.File;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
     private FlowerRecyclerViewAdapter mAdapter;
     Toolbar toolbar;
     DBHelper db;
+    private static int IMG_RESULT = 1;
+
+    FloatingActionButton fab_gallery;
+    FloatingActionButton fab_camera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +50,59 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        openCamera = (FloatingActionButton) findViewById(R.id.openCamera);
-        openCamera.setOnClickListener(new View.OnClickListener() {
+        fab_camera = (FloatingActionButton) findViewById(R.id.fab_camera);
+        fab_gallery = (FloatingActionButton) findViewById(R.id.fab_gallery);
+        fab_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent openCamera = new Intent(getApplicationContext(), CameraActivity.class);
                 startActivity(openCamera);
             }
         });
+
+        fab_gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, IMG_RESULT);
+            }
+        });
         setupToolBar();
         initComponent();
         checkPermission();
     }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+
+            if (requestCode == IMG_RESULT && resultCode == RESULT_OK
+                    && null != data) {
+                Uri uri = data.getData();
+
+                Intent showPicture = new Intent(this, PicturePreview.class);
+                showPicture.putExtra("img_path", getPathFromUri(uri));
+
+                startActivity(showPicture);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Please try again", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    public String getPathFromUri(Uri uri)
+    {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor == null) return null;
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String s=cursor.getString(column_index);
+        cursor.close();
+        return s;
+    }
+
     void setupToolBar(){
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
