@@ -11,8 +11,6 @@ import android.util.Log;
 
 import com.bkai.flowerdetect.models.Flower;
 
-import org.opencv.ml.SVM;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,7 +32,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Database Name
     private static final String DATABASE_NAME = "flowerdb.db";
-    private static final String SVM_NAME = "svm.dat";
+    private static final String SVM_NAME = "svm.yml";
     private String DB_PATH;
     private Context mContext;
     private SQLiteDatabase myDataBase;
@@ -104,7 +102,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private boolean checkDataSVM(){
 
-        String SVM_PATH = DB_PATH + "/svm.dat";
+        String SVM_PATH = DB_PATH + "/svm.yml";
         File svm_file = new File(SVM_PATH);
 
         if (svm_file.exists())

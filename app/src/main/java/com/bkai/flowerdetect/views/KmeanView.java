@@ -85,7 +85,7 @@ public class KmeanView extends AppCompatActivity {
             String name = msg.getData().getString("result");
             DBHelper db = new DBHelper(getApplicationContext());
 
-            Flower flower = db.getFlowerById(Integer.parseInt(name));
+            Flower flower = db.getFlowerById((int)Float.parseFloat(name));
             _waiting.dismiss();
 
             Intent flowerDetail = new Intent(getApplicationContext(), FlowerDetail.class);
