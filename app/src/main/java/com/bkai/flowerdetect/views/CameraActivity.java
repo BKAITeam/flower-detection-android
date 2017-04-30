@@ -46,14 +46,7 @@ import static com.bkai.flowerdetect.R.id.takePicture;
 
 
 public class CameraActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener {
-    static {
-        if(!OpenCVLoader.initDebug())
-        {
-            Log.e("OpenCv","Init Fail");
-        } else {
-            Log.e("OpenCv","Init Successful");
-        }
-    }
+
 
     private static final String TAG = "OCVSample::Activity";
     private CameraView mOpenCvCameraView;
@@ -156,7 +149,6 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
 
         Imgproc.cvtColor(mRgba, mRgbaT, Imgproc.COLOR_RGBA2RGB, 4);
         Imgproc.cvtColor(mRgbaT, mRgbaT, Imgproc.COLOR_RGB2BGR, 4);
-
 
         Imgcodecs.imwrite(mPictureFileName, mRgbaT);
 

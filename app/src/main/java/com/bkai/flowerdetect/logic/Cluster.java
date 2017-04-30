@@ -30,7 +30,6 @@ public class Cluster extends Thread {
         this._handler = handler;
         this.cutout = cutout;
         this. k = k;
-
     }
 
     public List<Mat> getClusters() {

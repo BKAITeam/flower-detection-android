@@ -38,6 +38,8 @@ public class KmeanView extends AppCompatActivity {
     Toolbar toolbar;
     ProgressDialog _waiting;
 
+    ArrayList<Bitmap> listKmeans = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,16 +59,19 @@ public class KmeanView extends AppCompatActivity {
         _waiting.show();
 
         gridView = (GridView) findViewById(R.id.gridview);
-        mGridViewPictureAdapter = new GridViewPicturesAdapter(this, R.layout.grid_cluster_view, getData());
+
+        listKmeans = getData();
+
+        mGridViewPictureAdapter = new GridViewPicturesAdapter(this, R.layout.grid_cluster_view, listKmeans);
         gridView.setAdapter(mGridViewPictureAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                _waiting.setIndeterminate(true);
-                _waiting.setMessage("Detecting...");
-                _waiting.show();
-                Prediction prediction = new Prediction(_handerPrediction);
+//                _waiting.setIndeterminate(true);
+//                _waiting.setMessage("Detecting...");
+//                _waiting.show();
+                Prediction prediction = new Prediction(getApplicationContext(),_handerPrediction, listKmeans.get(i));
                 prediction.start();
             }
         });

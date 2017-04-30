@@ -11,6 +11,9 @@ import android.util.Log;
 
 import com.bkai.flowerdetect.models.Flower;
 
+import org.opencv.ml.SVM;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +34,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Database Name
     private static final String DATABASE_NAME = "flowerdb.db";
+    private static final String SVM_NAME = "svm.dat";
     private String DB_PATH;
     private Context mContext;
     private SQLiteDatabase myDataBase;
@@ -43,7 +47,6 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_SCIENCE_NAME = "science_name";
     private static final String KEY_NAME = "name";
     private static final String KEY_DESCRIPTION = "description";
-
     // Table create Statements
     private static final String CREATE_TABLE_FLOWER = "CREATE TABLE "
             + TABLE_FLOWER + "("
@@ -99,6 +102,33 @@ public class DBHelper extends SQLiteOpenHelper {
         return checkDB != null ? true : false;
     }
 
+    private boolean checkDataSVM(){
+
+        String SVM_PATH = DB_PATH + "/svm.dat";
+        File svm_file = new File(SVM_PATH);
+
+        if (svm_file.exists())
+            return true;
+        else
+            return false;
+    }
+
+    private void copySVMData() throws IOException {
+        InputStream myInput = mContext.getAssets().open(SVM_NAME);
+
+        String outFileName = DB_PATH + SVM_NAME;
+
+        OutputStream myOutput = new FileOutputStream(outFileName);
+        byte[] buffer = new byte[1024];
+        int length;
+        while((length = myInput.read(buffer))>0){
+            myOutput.write(buffer,0,length);
+        }
+        myOutput.flush();
+        myOutput.close();
+        myInput.close();
+    }
+
     private void copyDataBase() throws IOException{
 
         //Open your local db as the input stream
@@ -142,6 +172,14 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.e(TAG, "Create database");
 
         boolean dbExist = checkDataBase();
+
+        boolean svmExist = checkDataSVM();
+
+        if (svmExist){
+
+        } else {
+            copySVMData();
+        }
 
         if(dbExist){
             //do nothing - database already exist

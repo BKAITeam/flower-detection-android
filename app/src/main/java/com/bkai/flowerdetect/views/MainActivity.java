@@ -16,6 +16,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -26,11 +27,20 @@ import com.bkai.flowerdetect.database.DBHelper;
 import com.bkai.flowerdetect.models.Flower;
 import com.github.clans.fab.FloatingActionButton;
 
+import org.opencv.android.OpenCVLoader;
+
 import java.io.File;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
+    static {
+        if(!OpenCVLoader.initDebug())
+        {
+            Log.e("OpenCv","Init Fail");
+        } else {
+            Log.e("OpenCv","Init Successful");
+        }
+    }
     FloatingActionButton openCamera;
     private List<Flower> mFlowerList;
     private RecyclerView mRecyclerView;
