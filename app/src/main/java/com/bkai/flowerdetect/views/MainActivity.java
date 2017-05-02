@@ -1,6 +1,7 @@
 package com.bkai.flowerdetect.views;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -30,6 +31,7 @@ import com.github.clans.fab.FloatingActionButton;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -73,8 +75,14 @@ public class MainActivity extends AppCompatActivity {
         fab_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, IMG_RESULT);
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"), IMG_RESULT);
+
+//                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(intent, IMG_RESULT);
             }
         });
         setupToolBar();
@@ -91,7 +99,9 @@ public class MainActivity extends AppCompatActivity {
                 Uri uri = data.getData();
 
                 Intent showPicture = new Intent(this, PicturePreview.class);
-                showPicture.putExtra("img_path", getPathFromUri(uri));
+                String file_path = getPath(uri);
+                showPicture.putExtra("img_path", file_path);
+                showPicture.putExtra("img_uri", uri.toString());
 
                 startActivity(showPicture);
             }
@@ -103,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String getPathFromUri(Uri uri)
     {
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {  };
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
         if (cursor == null) return null;
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -111,6 +121,29 @@ public class MainActivity extends AppCompatActivity {
         String s=cursor.getString(column_index);
         cursor.close();
         return s;
+    }
+
+    public String getPath(Uri uri) throws URISyntaxException {
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] projection = { "_data" };
+            Cursor cursor = null;
+
+            try {
+                cursor = getContentResolver().query(uri, projection, null, null, null);
+                int column_index = cursor.getColumnIndexOrThrow("_data");
+                if (cursor.moveToFirst()) {
+                    String file_path = cursor.getString(column_index);
+                    return file_path;
+                }
+            } catch (Exception e) {
+                // Eat it
+            }
+        }
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
     }
 
     void setupToolBar(){

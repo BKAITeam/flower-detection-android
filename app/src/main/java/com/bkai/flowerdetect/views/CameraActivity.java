@@ -169,8 +169,8 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         File img_file = new File(img_path);
         Uri img_uri = Uri.fromFile(img_file);
 
-//        showPicture.putExtra("img_uri", img_uri.toString());
-        showPicture.putExtra("img_path", img_path);
+        showPicture.putExtra("img_uri", img_uri.toString());
+//        showPicture.putExtra("img_path", img_path);
 
         startActivity(showPicture);
     }

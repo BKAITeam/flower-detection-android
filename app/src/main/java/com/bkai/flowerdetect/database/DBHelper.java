@@ -102,7 +102,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private boolean checkDataSVM(){
 
-        String SVM_PATH = DB_PATH + "/svm.yml";
+        String SVM_PATH = this.mContext.getApplicationInfo().dataDir + "/" + SVM_NAME;
         File svm_file = new File(SVM_PATH);
 
         if (svm_file.exists())
@@ -114,7 +114,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private void copySVMData() throws IOException {
         InputStream myInput = mContext.getAssets().open(SVM_NAME);
 
-        String outFileName = DB_PATH + SVM_NAME;
+        String outFileName = this.mContext.getApplicationInfo().dataDir + "/" + SVM_NAME;
 
         OutputStream myOutput = new FileOutputStream(outFileName);
         byte[] buffer = new byte[1024];

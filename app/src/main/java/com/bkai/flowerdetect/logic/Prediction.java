@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.bkai.flowerdetect.helpers.MyHelper;
+
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -52,10 +54,15 @@ public class Prediction extends Thread {
         svm.setC(20);
         svm.setKernel(SVM.RBF);
         svm.setType(SVM.C_SVC);
-        svm = SVM.load("/data/user/0/com.bkai.flowerdetect/databases/svm.yml");
 
-        Mat mat = new Mat(this._img.getWidth(), this._img.getHeight(), CvType.CV_8UC3);
-        Utils.bitmapToMat(this._img, mat);
+        String svm_dir = this._context.getApplicationInfo().dataDir + "/" + "svm.yml";
+
+        svm = SVM.load(svm_dir);
+
+//        Mat mat = new Mat(this._img.getWidth(), this._img.getHeight(), CvType.CV_8UC3);
+//        MyHelper.bitmapToMat(this._img, mat);
+
+        Mat mat = MyHelper.bitmapToMat(this._img);
 
         Moments momento = new Moments();
         Mat hu = new Mat(1,7, CV_32F);
@@ -83,8 +90,8 @@ public class Prediction extends Thread {
         labels[0] = 7;
         labels[2] = 3;
         labels[4] = 1;
-        labels[6] = 4;
-        labels[8] = 5;
+//        labels[6] = 4;
+//        labels[8] = 5;
         labels[10] = 10;
         labels[11] = 9;
         labels[12] = 6;

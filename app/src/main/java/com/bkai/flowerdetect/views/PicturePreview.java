@@ -30,7 +30,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class PicturePreview extends AppCompatActivity {
-
+    final String TAG = "PicturePreview";
     ImageView img_view;
     Toolbar toolbar;
     public static byte img_binary[];
@@ -40,6 +40,7 @@ public class PicturePreview extends AppCompatActivity {
     ImageButton btn_back;
 
     String mPictureFileName;
+    Uri mPictureUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,16 +91,14 @@ public class PicturePreview extends AppCompatActivity {
         Intent intent = getIntent();
         mPictureFileName = intent.getStringExtra("img_path");
         Intent showPicture = new Intent(this, KmeanView.class);
-        showPicture.putExtra("img_path", mPictureFileName);
+        showPicture.putExtra("img_uri", mPictureUri.toString());
         startActivity(showPicture);
     }
 
     private void show_image(){
         Intent intent = getIntent();
-        mPictureFileName = intent.getStringExtra("img_path");
-        File file = new File(mPictureFileName);
-        Uri uri = Uri.fromFile(file);
-        img_view.setImageURI(uri);
+        mPictureUri = Uri.parse(intent.getStringExtra("img_uri"));
+        img_view.setImageURI(mPictureUri);
     }
 
     private final Handler _hander = new Handler() {

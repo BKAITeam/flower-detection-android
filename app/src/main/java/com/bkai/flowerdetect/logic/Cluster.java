@@ -1,8 +1,11 @@
 package com.bkai.flowerdetect.logic;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
+import com.bkai.flowerdetect.helpers.MyHelper;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -31,6 +34,13 @@ public class Cluster extends Thread {
         this.cutout = cutout;
         this. k = k;
     }
+
+//    public Cluster(Handler handler, Bitmap cutout, int k){
+//        this._handler = handler;
+//        Mat mat = MyHelper.bitmapToMat(cutout);
+//        this.cutout = mat;
+//        this. k = k;
+//    }
 
     public List<Mat> getClusters() {
         return clusters;
@@ -66,6 +76,8 @@ public class Cluster extends Thread {
     private List<Mat> showClusters (Mat cutout, Mat labels, Mat centers) {
         centers.convertTo(centers, CvType.CV_8UC1, 255.0);
         centers.reshape(3);
+
+        cutout.convertTo(cutout, CvType.CV_8UC3);
 
         List<Mat> clusters = new ArrayList<Mat>();
         for(int i = 0; i < centers.rows(); i++) {

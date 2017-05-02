@@ -3,6 +3,7 @@ package com.bkai.flowerdetect.views;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.widget.GridView;
 import com.bkai.flowerdetect.R;
 import com.bkai.flowerdetect.adapters.GridViewPicturesAdapter;
 import com.bkai.flowerdetect.database.DBHelper;
+import com.bkai.flowerdetect.helpers.MyHelper;
 import com.bkai.flowerdetect.logic.Cluster;
 import com.bkai.flowerdetect.logic.Prediction;
 import com.bkai.flowerdetect.models.Flower;
@@ -29,6 +31,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class KmeanView extends AppCompatActivity {
@@ -119,12 +123,22 @@ public class KmeanView extends AppCompatActivity {
         ArrayList result = new ArrayList();
         Intent intent = getIntent();
         String img_src = intent.getStringExtra("img_path");
-        Log.e("FILE", img_src);
 
-        Mat mRbga = Imgcodecs.imread(img_src);
+        Uri _uri = Uri.parse(intent.getStringExtra("img_uri"));
+        Bitmap bitmap = null;
+        try {
+            InputStream image_stream = getContentResolver().openInputStream(_uri);
+            bitmap = BitmapFactory.decodeStream(image_stream );
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+//        Mat mRbga = Imgcodecs.imread(img_src);
+        Mat mRbga = MyHelper.bitmapToMat(bitmap);
         Mat mRgbaF = new Mat(mRbga.size(), CvType.CV_8UC3);
 
-        Imgproc.cvtColor(mRbga, mRbga, Imgproc.COLOR_RGB2BGR, 4);
+        Imgproc.cvtColor(mRbga, mRbga, Imgproc.COLOR_RGBA2BGR, 4);
 
         Cluster cluster = new Cluster(_hander, mRbga, 3);
         cluster.run();
