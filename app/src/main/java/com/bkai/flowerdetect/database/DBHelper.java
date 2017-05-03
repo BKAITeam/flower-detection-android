@@ -45,6 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_SCIENCE_NAME = "science_name";
     private static final String KEY_NAME = "name";
     private static final String KEY_ENG_NAME = "eng_name";
+    private static final String KEY_CO_TICH = "totich";
     private static final String KEY_DESCRIPTION = "description";
     // Table create Statements
     private static final String CREATE_TABLE_FLOWER = "CREATE TABLE "
@@ -255,7 +256,8 @@ public class DBHelper extends SQLiteOpenHelper {
                                     cursor.getString(cursor.getColumnIndex(KEY_NAME)),
                                     cursor.getString(cursor.getColumnIndex(KEY_SCIENCE_NAME)),
                                     cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)),
-                                    cursor.getString(cursor.getColumnIndex(KEY_ENG_NAME))
+                                    cursor.getString(cursor.getColumnIndex(KEY_ENG_NAME)),
+                                    cursor.getString(cursor.getColumnIndex(KEY_CO_TICH))
             ));
             cursor.moveToNext();
         }
@@ -277,7 +279,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     cursor.getString(cursor.getColumnIndex(KEY_NAME)),
                     cursor.getString(cursor.getColumnIndex(KEY_SCIENCE_NAME)),
                     cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)),
-                    cursor.getString(cursor.getColumnIndex(KEY_ENG_NAME))
+                    cursor.getString(cursor.getColumnIndex(KEY_ENG_NAME)),
+                    cursor.getString(cursor.getColumnIndex(KEY_CO_TICH))
             );
         }
 

@@ -17,7 +17,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.bkai.flowerdetect.R;
-import com.bkai.flowerdetect.adapters.GridViewPicturesAdapter;
+import com.bkai.flowerdetect.adapters.GridViewKmeanAdapter;
 import com.bkai.flowerdetect.database.DBHelper;
 import com.bkai.flowerdetect.helpers.MyHelper;
 import com.bkai.flowerdetect.logic.Cluster;
@@ -27,19 +27,15 @@ import com.bkai.flowerdetect.models.Flower;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 public class KmeanView extends AppCompatActivity {
 
-    GridViewPicturesAdapter mGridViewPictureAdapter;
+    GridViewKmeanAdapter mGridViewPictureAdapter;
     GridView gridView;
     Toolbar toolbar;
     ProgressDialog _waiting;
@@ -68,7 +64,7 @@ public class KmeanView extends AppCompatActivity {
 
         listKmeans = getData();
 
-        mGridViewPictureAdapter = new GridViewPicturesAdapter(this, R.layout.grid_cluster_view, listKmeans);
+        mGridViewPictureAdapter = new GridViewKmeanAdapter(this, R.layout.grid_cluster_view, listKmeans);
         gridView.setAdapter(mGridViewPictureAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,7 +111,8 @@ public class KmeanView extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_back_kids);
+        getSupportActionBar().setTitle("Đố bé chọn đúng bông hoa?");
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

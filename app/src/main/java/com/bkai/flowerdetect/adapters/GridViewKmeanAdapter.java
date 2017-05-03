@@ -19,12 +19,12 @@ import java.util.ArrayList;
  */
 
 
-public class GridViewPicturesAdapter extends ArrayAdapter {
+public class GridViewKmeanAdapter extends ArrayAdapter {
     private Context context;
     private int layoutResourceId;
     private ArrayList data = new ArrayList();
 
-    public GridViewPicturesAdapter(Context context, int layoutResourceId, ArrayList data) {
+    public GridViewKmeanAdapter(Context context, int layoutResourceId, ArrayList data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;

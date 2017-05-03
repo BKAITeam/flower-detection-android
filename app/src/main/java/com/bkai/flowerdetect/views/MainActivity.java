@@ -19,12 +19,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.Toast;
 
 import com.bkai.flowerdetect.R;
 import com.bkai.flowerdetect.adapters.FlowerRecyclerViewAdapter;
+import com.bkai.flowerdetect.adapters.GridViewFlowerAdapter;
+import com.bkai.flowerdetect.adapters.GridViewKmeanAdapter;
 import com.bkai.flowerdetect.database.DBHelper;
+import com.bkai.flowerdetect.logic.Prediction;
 import com.bkai.flowerdetect.models.Flower;
 import com.github.clans.fab.FloatingActionButton;
 
@@ -53,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fab_gallery;
     FloatingActionButton fab_camera;
+
+    GridViewFlowerAdapter mGridViewPictureAdapter;
+    GridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +93,28 @@ public class MainActivity extends AppCompatActivity {
 //                startActivityForResult(intent, IMG_RESULT);
             }
         });
-        setupToolBar();
+//        setupToolBar();
         initComponent();
         checkPermission();
+    }
+
+    void setUGridView(){
+
+        gridView = (GridView) findViewById(R.id.grid_flower_list);
+
+        mGridViewPictureAdapter = new GridViewFlowerAdapter(this, R.layout.grid_flower_view, mFlowerList);
+        gridView.setAdapter(mGridViewPictureAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent flowerDetail = new Intent(getApplicationContext(), FlowerDetail.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("flower", mFlowerList.get(position));
+                flowerDetail.putExtra("flower_package", bundle);
+                startActivity(flowerDetail);
+            }
+        });
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -167,23 +194,25 @@ public class MainActivity extends AppCompatActivity {
 
         mFlowerList = db.getAllFowers();
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.listFlower);
-        mAdapter = new FlowerRecyclerViewAdapter(this,mFlowerList, null);
+        setUGridView();
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(mAdapter);
-
-        mAdapter.SetOnItemClickListener(new FlowerRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent flowerDetail = new Intent(getApplicationContext(), FlowerDetail.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("flower", mFlowerList.get(position));
-                flowerDetail.putExtra("flower_package", bundle);
-                startActivity(flowerDetail);
-            }
-        });
+//        mRecyclerView = (RecyclerView) findViewById(R.id.listFlower);
+//        mAdapter = new FlowerRecyclerViewAdapter(this,mFlowerList, null);
+//
+//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+//        mRecyclerView.setAdapter(mAdapter);
+//
+//        mAdapter.SetOnItemClickListener(new FlowerRecyclerViewAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                Intent flowerDetail = new Intent(getApplicationContext(), FlowerDetail.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("flower", mFlowerList.get(position));
+//                flowerDetail.putExtra("flower_package", bundle);
+//                startActivity(flowerDetail);
+//            }
+//        });
     }
 }

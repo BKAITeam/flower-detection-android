@@ -10,6 +10,8 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,9 +19,12 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.bkai.flowerdetect.R;
+import com.bkai.flowerdetect.adapters.ViewPagerAdapter;
+import com.bkai.flowerdetect.helpers.SlidingTabLayout;
 import com.bkai.flowerdetect.models.Flower;
 
 import java.io.File;
@@ -39,7 +44,15 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
     TextView flower_description;
     TextToSpeech speech;
 
+    ViewPager pager;
+    ViewPagerAdapter pagerAdapter;
+    SlidingTabLayout tabs;
+    CharSequence Titiles []={"Cổ tích","Khoa học"};
+    TabLayout tabLayout ;
+
     Toolbar toolbar;
+
+    Flower mFlower;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +71,8 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
         }
         setSupportActionBar(toolbar);
 
-        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_back_kids);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
@@ -69,12 +81,12 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
         flowImage = (ImageView) findViewById(R.id.img_view);
         flower_Speaker_Eng = (ImageView) findViewById(R.id.img_speaker_eng);
         flower_Speaker_Vi = (ImageView) findViewById(R.id.img_speaker_vi);
-        flower_name = (TextView) findViewById(R.id.flower_name);
+//        flower_name = (TextView) findViewById(R.id.flower_name);
         flower_eng_name = (TextView) findViewById(R.id.flower_eng_name);
-        flower_description = (TextView) findViewById(R.id.flower_description);
+//        flower_description = (TextView) findViewById(R.id.flower_description);
 
         Intent intent = getIntent();
-        Flower mFlower = (Flower) intent.getBundleExtra("flower_package").getSerializable("flower");
+        mFlower = (Flower) intent.getBundleExtra("flower_package").getSerializable("flower");
 
         getSupportActionBar().setTitle(mFlower.getName());
 
@@ -93,10 +105,9 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
 
         flowImage.setImageBitmap(bitmap);
 
-        flower_name.setText(mFlower.getName());
-        flower_eng_name.setText(mFlower.getScienceName());
+//        flower_name.setText(mFlower.getName());
         flower_eng_name.setText(mFlower.getEngName());
-        flower_description.setText(Html.fromHtml(mFlower.getDescription()));
+//        flower_description.setText(Html.fromHtml(mFlower.getDescription()));
         speech = new TextToSpeech(this, this);
         flower_Speaker_Eng.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +120,37 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
             @Override
             public void onClick(View view) {
                 speakOutVi();
+            }
+        });
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        tabLayout.addTab(tabLayout.newTab().setText("Cổ tích"));
+        tabLayout.addTab(tabLayout.newTab().setText("Khoa học"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        pager = (ViewPager) findViewById(R.id.pager);
+
+        pagerAdapter = new ViewPagerAdapter((getSupportFragmentManager()), 2);
+
+        pager.setAdapter(pagerAdapter);
+
+        pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                pager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
     }
@@ -153,8 +195,8 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-                flower_Speaker_Eng.setEnabled(true);
-                flower_Speaker_Vi.setEnabled(true);
+//                flower_Speaker_Eng.setEnabled(true);
+//                flower_Speaker_Vi.setEnabled(true);
 //                speakOut();
             }
 
@@ -165,7 +207,9 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
 
     private void speakOut() {
 
-        String text = flower_eng_name.getText().toString();
+        speech.setLanguage(Locale.UK);
+
+        String text = mFlower.getEngName();
 
         speech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
@@ -175,10 +219,19 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
 
             speech.setLanguage(Locale.forLanguageTag("vi"));
 
-            String text = flower_name.getText().toString();
+            String text = mFlower.getName();
 
             speech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(speech !=null){
+            speech.stop();
+            speech.shutdown();
+        }
+        super.onDestroy();
     }
 }
