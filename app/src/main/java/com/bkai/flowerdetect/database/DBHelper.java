@@ -44,6 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_ID = "id";
     private static final String KEY_SCIENCE_NAME = "science_name";
     private static final String KEY_NAME = "name";
+    private static final String KEY_ENG_NAME = "eng_name";
     private static final String KEY_DESCRIPTION = "description";
     // Table create Statements
     private static final String CREATE_TABLE_FLOWER = "CREATE TABLE "
@@ -245,15 +246,16 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Flower> getAllFowers(){
         ArrayList<Flower> flowers = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_FLOWER, null);
+        String where = " where id not in (3,4) ";
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_FLOWER + where, null);
         cursor.moveToFirst();
 
         while(!cursor.isAfterLast()){
             flowers.add(new Flower(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
                                     cursor.getString(cursor.getColumnIndex(KEY_NAME)),
                                     cursor.getString(cursor.getColumnIndex(KEY_SCIENCE_NAME)),
-                                    cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION))
+                                    cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)),
+                                    cursor.getString(cursor.getColumnIndex(KEY_ENG_NAME))
             ));
             cursor.moveToNext();
         }
@@ -274,7 +276,8 @@ public class DBHelper extends SQLiteOpenHelper {
             flower = new Flower(cursor.getInt(cursor.getColumnIndex(KEY_ID)),
                     cursor.getString(cursor.getColumnIndex(KEY_NAME)),
                     cursor.getString(cursor.getColumnIndex(KEY_SCIENCE_NAME)),
-                    cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION))
+                    cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)),
+                    cursor.getString(cursor.getColumnIndex(KEY_ENG_NAME))
             );
         }
 

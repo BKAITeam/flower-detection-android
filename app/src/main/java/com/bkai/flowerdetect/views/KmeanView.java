@@ -27,6 +27,7 @@ import com.bkai.flowerdetect.models.Flower;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class KmeanView extends AppCompatActivity {
 
@@ -138,27 +140,54 @@ public class KmeanView extends AppCompatActivity {
         Mat mRbga = MyHelper.bitmapToMat(bitmap);
         Mat mRgbaF = new Mat(mRbga.size(), CvType.CV_8UC3);
 
-        Imgproc.cvtColor(mRbga, mRbga, Imgproc.COLOR_RGBA2BGR, 4);
+        Imgproc.cvtColor(mRbga, mRbga, Imgproc.COLOR_RGBA2BGR, 3);
 
         Cluster cluster = new Cluster(_hander, mRbga, 3);
         cluster.run();
 
         mRgbaF = cluster.getClusters().get(0);
+        mRgbaF = preProcess(mRgbaF);
+
+
         Bitmap bmp = Bitmap.createBitmap(mRgbaF.cols(), mRgbaF.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mRgbaF, bmp);
         result.add(bmp);
+//        result.add(bitmap);
 
         mRgbaF = cluster.getClusters().get(1);
+        mRgbaF = preProcess(mRgbaF);
         bmp = Bitmap.createBitmap(mRgbaF.cols(), mRgbaF.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mRgbaF, bmp);
         result.add(bmp);
+//        result.add(bitmap);
 
         mRgbaF = cluster.getClusters().get(2);
+        mRgbaF = preProcess(mRgbaF);
         bmp = Bitmap.createBitmap(mRgbaF.cols(), mRgbaF.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mRgbaF, bmp);
         result.add(bmp);
+//        result.add(bitmap);
 
         return  result;
+    }
+
+
+    public Mat preProcess(final Mat src) {
+
+//        final Mat dst = new Mat(src.rows(), src.cols(), src.type());
+//        src.copyTo(dst);
+//
+//        Imgproc.cvtColor(dst, dst, Imgproc.COLOR_BGR2GRAY);
+//
+//        final List<MatOfPoint> points = new ArrayList<>();
+//        final Mat hierarchy = new Mat();
+//        Imgproc.findContours(dst, points, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+//
+//        Imgproc.cvtColor(dst, dst, Imgproc.COLOR_GRAY2BGR);
+
+        Imgproc.cvtColor(src, src, Imgproc.COLOR_BGR2RGBA, 4);
+
+        return src;
     }
 
     @Override

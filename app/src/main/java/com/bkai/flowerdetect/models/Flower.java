@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class Flower implements Serializable {
     String name;
     String scienceName;
+    String engName;
     String description;
     int id;
 
@@ -16,6 +17,14 @@ public class Flower implements Serializable {
         this.id = id;
         this.name  = name;
         this.scienceName = scienceName;
+        this.description = description;
+    }
+
+    public Flower(int id, String name, String scienceName, String description, String engName){
+        this.id = id;
+        this.name  = name;
+        this.scienceName = scienceName;
+        this.engName = engName;
         this.description = description;
     }
 
@@ -60,5 +69,13 @@ public class Flower implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getEngName() {
+        return engName;
+    }
+
+    public void setEngName(String engName) {
+        this.engName = engName;
     }
 }

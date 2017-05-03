@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         mFlowerList = db.getAllFowers();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.listFlower);
-        mAdapter = new FlowerRecyclerViewAdapter(this,mFlowerList);
+        mAdapter = new FlowerRecyclerViewAdapter(this,mFlowerList, null);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
         mRecyclerView.setLayoutManager(mLayoutManager);

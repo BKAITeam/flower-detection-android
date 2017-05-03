@@ -59,7 +59,9 @@ public class Cluster extends Thread {
     }
 
     public List<Mat> cluster(Mat cutout, int k) {
-        Imgproc.resize(cutout, cutout, new Size( (int)(cutout.cols()*0.2), (int)(cutout.rows()*0.2) ));
+        if (cutout.cols() > 500 && cutout.rows() > 500){
+            Imgproc.resize(cutout, cutout, new Size( (int)(cutout.cols()*0.2), (int)(cutout.rows()*0.2) ));
+        }
 
         Mat samples = cutout.reshape(1, cutout.cols() * cutout.rows());
         Mat samples32f = new Mat();

@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -26,13 +27,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
-public class FlowerDetail extends AppCompatActivity {
+public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnInitListener{
 
     ImageView flowImage;
+    ImageView flower_Speaker_Eng;
+    ImageView flower_Speaker_Vi;
     TextView flower_name;
-    TextView flower_science_name;
+    TextView flower_eng_name;
     TextView flower_description;
+    TextToSpeech speech;
+
     Toolbar toolbar;
 
     @Override
@@ -61,8 +67,10 @@ public class FlowerDetail extends AppCompatActivity {
 
     void initComponent(){
         flowImage = (ImageView) findViewById(R.id.img_view);
+        flower_Speaker_Eng = (ImageView) findViewById(R.id.img_speaker_eng);
+        flower_Speaker_Vi = (ImageView) findViewById(R.id.img_speaker_vi);
         flower_name = (TextView) findViewById(R.id.flower_name);
-        flower_science_name = (TextView) findViewById(R.id.flower_science_name);
+        flower_eng_name = (TextView) findViewById(R.id.flower_eng_name);
         flower_description = (TextView) findViewById(R.id.flower_description);
 
         Intent intent = getIntent();
@@ -86,8 +94,23 @@ public class FlowerDetail extends AppCompatActivity {
         flowImage.setImageBitmap(bitmap);
 
         flower_name.setText(mFlower.getName());
-        flower_science_name.setText(mFlower.getScienceName());
+        flower_eng_name.setText(mFlower.getScienceName());
+        flower_eng_name.setText(mFlower.getEngName());
         flower_description.setText(Html.fromHtml(mFlower.getDescription()));
+        speech = new TextToSpeech(this, this);
+        flower_Speaker_Eng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                speakOut();
+            }
+        });
+
+        flower_Speaker_Vi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                speakOutVi();
+            }
+        });
     }
 
     public static Bitmap getBitmapFromAsset(Context context, String filePath) {
@@ -118,5 +141,44 @@ public class FlowerDetail extends AppCompatActivity {
         List<String> listImage = Arrays.asList(files);
 
         return listImage;
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = speech.setLanguage(Locale.UK);
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                flower_Speaker_Eng.setEnabled(true);
+                flower_Speaker_Vi.setEnabled(true);
+//                speakOut();
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+    }
+
+    private void speakOut() {
+
+        String text = flower_eng_name.getText().toString();
+
+        speech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    private void speakOutVi() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            speech.setLanguage(Locale.forLanguageTag("vi"));
+
+            String text = flower_name.getText().toString();
+
+            speech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
+
     }
 }
