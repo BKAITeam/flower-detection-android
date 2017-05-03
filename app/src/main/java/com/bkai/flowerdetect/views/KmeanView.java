@@ -111,7 +111,7 @@ public class KmeanView extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_back_kids);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.ic_left);
         getSupportActionBar().setTitle("Đố bé chọn đúng bông hoa?");
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

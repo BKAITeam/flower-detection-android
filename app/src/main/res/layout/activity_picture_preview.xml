@@ -33,7 +33,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:src="@drawable/ic_arrow_upward_black_24dp"
+            android:src="@drawable/ic_up"
             android:id="@+id/btn_next"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -41,7 +41,7 @@
             android:background="@color/colorPrimary"
              />
         <ImageButton
-            android:src="@drawable/ic_arrow_downward_black_24dp"
+            android:src="@drawable/ic_down"
             android:id="@+id/btn_back"
             android:layout_width="match_parent"
             android:layout_height="0dp"
