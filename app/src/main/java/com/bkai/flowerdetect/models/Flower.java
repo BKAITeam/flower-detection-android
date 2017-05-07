@@ -12,6 +12,7 @@ public class Flower implements Serializable {
     String engName;
     String description;
     String cotich;
+    String cotich_eng;
     int id;
 
     public Flower(int id, String name, String scienceName, String description){
@@ -29,13 +30,14 @@ public class Flower implements Serializable {
         this.description = description;
     }
 
-    public Flower(int id, String name, String scienceName, String description, String engName, String cotich){
+    public Flower(int id, String name, String scienceName, String description, String engName, String cotich, String cotich_eng){
         this.id = id;
         this.name  = name;
         this.scienceName = scienceName;
         this.engName = engName;
         this.description = description;
         this.cotich = cotich;
+        this.cotich_eng = cotich_eng;
     }
 
     public Flower(String name, String scienceName, String description){
@@ -95,5 +97,13 @@ public class Flower implements Serializable {
 
     public void setCotich(String cotich) {
         this.cotich = cotich;
+    }
+
+    public String getCotich_eng() {
+        return cotich_eng;
+    }
+
+    public void setCotich_eng(String cotich_eng) {
+        this.cotich_eng = cotich_eng;
     }
 }

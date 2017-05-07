@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">BKids</string>
     <string name="title_activity_show_picture">ShowPicture</string>
+
+    <string name="story">Cổ tích</string>
+    <string name="science">Khoa học</string>
+    <string name="loading">Đang xử lý</string>
+    <string name="from_gallery">From gallery</string>
+    <string name="open_camera">Open camera</string>
+    <string name="cancel">Bỏ qua</string>
+
+    <string name="detail">Chi tiết</string>
+    <string name="report">Báo cáo</string>
+
+    <string-array name="lang_array">
+        <item>Viet</item>
+        <item>Eng</item>
+    </string-array>
 </resources>

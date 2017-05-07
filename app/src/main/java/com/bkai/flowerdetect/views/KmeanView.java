@@ -1,13 +1,16 @@
 package com.bkai.flowerdetect.views;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -51,46 +54,64 @@ public class KmeanView extends AppCompatActivity {
         _waiting.setCancelable(false);
 
         _waiting.setIndeterminate(true);
-        _waiting.setMessage("Please wait ...");
+        _waiting.setMessage(getResources().getString(R.string.loading));
 
-        setUGridView();
+        setUGridView(this);
         setupToolBar();
     }
 
-    void setUGridView(){
-        _waiting.show();
-
+    void setUGridView(Activity activity){
+        AsyncTaskGridView prepare = new AsyncTaskGridView(activity);
+        prepare.execute();
         gridView = (GridView) findViewById(R.id.gridview);
-
-        listKmeans = getData();
-
-        mGridViewPictureAdapter = new GridViewKmeanAdapter(this, R.layout.grid_cluster_view, listKmeans);
-        gridView.setAdapter(mGridViewPictureAdapter);
-
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                _waiting.setIndeterminate(true);
-//                _waiting.setMessage("Detecting...");
-//                _waiting.show();
                 Prediction prediction = new Prediction(getApplicationContext(),_handerPrediction, listKmeans.get(i));
                 prediction.start();
             }
         });
     }
 
+    class AsyncTaskGridView extends AsyncTask{
+        Activity activity;
+
+        public AsyncTaskGridView(Activity activity){
+            this.activity = activity;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            _waiting.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            listKmeans = getData();
+            return listKmeans;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            _waiting.dismiss();
+            mGridViewPictureAdapter = new GridViewKmeanAdapter(activity, R.layout.grid_cluster_view, listKmeans);
+            gridView.setAdapter(mGridViewPictureAdapter);
+            super.onPostExecute(o);
+        }
+    }
+
+
     private final Handler _handerPrediction = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
             String name = msg.getData().getString("result");
             DBHelper db = new DBHelper(getApplicationContext());
 
             Flower flower = db.getFlowerById((int)Float.parseFloat(name));
-            _waiting.dismiss();
 
-            Intent flowerDetail = new Intent(getApplicationContext(), FlowerDetail.class);
+            Intent flowerDetail = new Intent(getApplicationContext(), Result_Dialog.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("flower", flower);
             flowerDetail.putExtra("flower_package", bundle);
@@ -112,7 +133,13 @@ public class KmeanView extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final Drawable upArrow = getResources().getDrawable(R.drawable.ic_left);
-        getSupportActionBar().setTitle("Đố bé chọn đúng bông hoa?");
+
+        if (getResources().getConfiguration().locale.toString().equals("vi")){
+            getSupportActionBar().setTitle("Đố bé chọn đúng bông hoa?");
+        } else {
+            getSupportActionBar().setTitle("Can you pick the right flower ?");
+        }
+
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -164,7 +191,6 @@ public class KmeanView extends AppCompatActivity {
         Utils.matToBitmap(mRgbaF, bmp);
         result.add(bmp);
 //        result.add(bitmap);
-
         return  result;
     }
 

@@ -3,6 +3,7 @@ package com.bkai.flowerdetect.views;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -14,14 +15,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bkai.flowerdetect.R;
 import com.bkai.flowerdetect.adapters.ViewPagerAdapter;
 import com.bkai.flowerdetect.helpers.SlidingTabLayout;
 import com.bkai.flowerdetect.models.Flower;
+
+import org.honorato.multistatetogglebutton.MultiStateToggleButton;
+import org.honorato.multistatetogglebutton.ToggleButton;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,23 +42,23 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
     ImageView flowImage;
     ImageView flower_Speaker_Eng;
     ImageView flower_Speaker_Vi;
-    TextView flower_name;
     TextView flower_eng_name;
-    TextView flower_description;
     TextToSpeech speech;
+    MultiStateToggleButton lang_switch;
 
     ViewPager pager;
     ViewPagerAdapter pagerAdapter;
-    SlidingTabLayout tabs;
-    CharSequence Titiles []={"Cổ tích","Khoa học"};
     TabLayout tabLayout ;
 
     Toolbar toolbar;
 
     Flower mFlower;
+    Locale currentLocate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        currentLocate = getResources().getConfiguration().locale;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flower_detail);
 
@@ -83,7 +91,11 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
         Intent intent = getIntent();
         mFlower = (Flower) intent.getBundleExtra("flower_package").getSerializable("flower");
 
-        getSupportActionBar().setTitle(mFlower.getName());
+        if (getResources().getConfiguration().locale.toString().equals("vi")){
+            getSupportActionBar().setTitle(mFlower.getName());
+        } else {
+            getSupportActionBar().setTitle(mFlower.getEngName());
+        }
 
         String name = null;
 
@@ -120,8 +132,8 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Cổ tích"));
-        tabLayout.addTab(tabLayout.newTab().setText("Khoa học"));
+        tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.story)));
+        tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.science)));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         pager = (ViewPager) findViewById(R.id.pager);
@@ -228,5 +240,51 @@ public class FlowerDetail extends AppCompatActivity implements TextToSpeech.OnIn
             speech.shutdown();
         }
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_lang, menu);
+        lang_switch = (MultiStateToggleButton) menu.findItem(R.id.switch_lang_menu_item).getActionView().findViewById(R.id.mstb_lang);
+
+        if (currentLocate.toString().equals("vi")){
+            lang_switch.setValue(0);
+        } else {
+            lang_switch.setValue(1);
+        }
+
+        lang_switch.setOnValueChangedListener(new ToggleButton.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int value) {
+                String lang[] = new String[2];
+                lang[0] ="vi";
+                lang[1] ="en";
+
+                Locale locale = new Locale(lang[value]);
+                Locale.setDefault(locale);
+                Configuration config = new Configuration();
+                config.locale = locale;
+                getResources().updateConfiguration(config,getResources().getDisplayMetrics());
+                RestartActivity();
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.switch_lang_menu_item:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void RestartActivity(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 }

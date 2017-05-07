@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">BKids</string>
+    <string name="title_activity_show_picture">ShowPicture</string>
+
+    <string name="story">Story</string>
+    <string name="science">Sciencce</string>
+    <string name="loading">Loading</string>
+    <string name="from_gallery">From gallery</string>
+    <string name="open_camera">Open camera</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="detail">Detail</string>
+    <string name="report">Report</string>
+
+    <string-array name="lang_array">
+        <item>Viet</item>
+        <item>Eng</item>
+    </string-array>
+</resources>

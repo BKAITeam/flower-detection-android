@@ -55,7 +55,11 @@ public class GridViewFlowerAdapter extends ArrayAdapter {
         }
 
         Flower item = (Flower) data.get(position);
-        holder.flower_name.setText(item.getName());
+        if (context.getResources().getConfiguration().locale.toString().equals("vi")){
+            holder.flower_name.setText(item.getName());
+        } else {
+            holder.flower_name.setText(item.getEngName());
+        }
 
         String name = null;
 

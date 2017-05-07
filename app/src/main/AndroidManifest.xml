@@ -6,6 +6,7 @@
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <supports-screens
         android:anyDensity="true"
@@ -33,22 +34,25 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.bkai.flowerdetect.views.MainActivity">
+        <activity android:name=".views.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bkai.flowerdetect.views.PicturePreview"
+            android:name=".views.PicturePreview"
             android:configChanges="orientation"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.bkai.flowerdetect.views.CameraActivity"
+            android:name=".views.CameraActivity"
             android:configChanges="orientation"
             android:screenOrientation="landscape" />
-        <activity android:name="com.bkai.flowerdetect.views.FlowerDetail" />
-        <activity android:name="com.bkai.flowerdetect.views.KmeanView"></activity>
+        <activity android:name=".views.FlowerDetail" />
+        <activity android:name=".views.KmeanView"></activity>
+        <activity android:name=".views.Result_Dialog"
+            android:theme="@style/AppTheme.Dark.DialogResult"></activity>
     </application>
 
 </manifest>
